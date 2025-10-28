@@ -4,6 +4,86 @@ This document provides detailed technical stories for implementing the Logoped s
 
 ---
 
+## ⚠️ Important: Package Versions & Dependencies
+
+### Version Management Policy
+
+**Always use the latest stable versions** of packages unless there are specific dependency conflicts. This document was last updated in **October 2025** with the following package versions:
+
+### Core Dependencies (Verified October 2025)
+
+| Package | Version | Notes |
+|---------|---------|-------|
+| **Expo SDK** | 54 | Latest (Sept 2025). Ships React Native 0.81 with React 19.1 |
+| **React Native** | 0.81 | Bundled with Expo SDK 54 |
+| **TypeScript** | Latest (5.x+) | Always use latest |
+| **NativeWind** | 4.1.x | Stable v4, v5 in preview |
+| **Tailwind CSS** | 3.4.x | Required by NativeWind v4 |
+| **React Native Reanimated** | 3.17.4+ | **Use v3.x, NOT v4!** (See note below) |
+| **TanStack Query** | 5.90.5+ | Package: `@tanstack/react-query` |
+| **react-native-mmkv** | 4.x | Latest uses Nitro Modules |
+| **i18next** | 24.2.3+ | Core i18n library |
+| **react-i18next** | 16.0.1+ | React bindings |
+| **expo-audio** | Latest | Replaces expo-av in SDK 53+ |
+| **expo-font** | Latest | Bundled with Expo SDK |
+| **@expo/vector-icons** | Latest | Bundled with Expo SDK |
+
+### 🚨 Critical Dependency Notes
+
+#### Reanimated Version Constraint
+**IMPORTANT:** Use **React Native Reanimated v3.17.4+** (v3.x), NOT v4.x!
+
+**Reason:**
+- NativeWind v4 requires Reanimated v3.x (~3.17.4)
+- Reanimated v4 only supports New React Native Architecture
+- Using Reanimated v4 will cause compatibility issues with NativeWind v4
+
+**Installation:**
+```bash
+# Correct - Use v3.x
+npx expo install react-native-reanimated@~3.17.4
+
+# Incorrect - Don't use v4.x with NativeWind v4
+npx expo install react-native-reanimated@latest  # This would install v4+
+```
+
+#### expo-audio vs expo-av
+- **SDK 53+**: Use `expo-audio` (new, better performance)
+- **SDK 52 and below**: Use `expo-av`
+
+#### MMKV New Architecture Requirement
+- `react-native-mmkv` v4 requires New Architecture (Fabric/TurboModules)
+- If not using New Architecture, stick with v3.x
+
+#### Package Name Changes
+- ❌ `react-query` (deprecated)
+- ✅ `@tanstack/react-query` (use this)
+
+### Checking for Updates
+
+Before installing packages, always check for latest versions:
+
+```bash
+# Check for outdated packages
+npm outdated
+
+# Install latest compatible versions
+npx expo install --check
+
+# Update specific package to latest
+npx expo install <package-name>@latest
+```
+
+### When to Pin Versions
+
+Only pin specific versions when:
+1. Known breaking changes in newer versions
+2. Dependency conflicts (like Reanimated v3 for NativeWind)
+3. Package in beta/alpha (wait for stable)
+4. Critical production app (test thoroughly first)
+
+---
+
 ## Table of Contents
 1. [Phase 1: Foundation](#phase-1-foundation-weeks-1-3)
 2. [Phase 2: Kid Mode Core](#phase-2-kid-mode-core-weeks-4-7)
@@ -24,7 +104,7 @@ This document provides detailed technical stories for implementing the Logoped s
 Set up a new Expo project with TypeScript configuration and essential tooling for the Logoped app.
 
 #### Technical Details
-- Use Expo SDK 51+ with TypeScript template
+- Use Expo SDK 54+ (latest) with TypeScript template
 - Configure `tsconfig.json` with strict mode
 - Set up path aliases for cleaner imports
 - Configure EAS (Expo Application Services) for builds
@@ -117,7 +197,7 @@ eas init
 Set up NativeWind (Tailwind CSS for React Native) and create the foundational design system with colors, typography, and spacing tokens.
 
 #### Technical Details
-- Install NativeWind v4 with Tailwind CSS
+- Install NativeWind v4.1+ with Tailwind CSS v3.4+
 - Configure custom theme with brand colors
 - Set up typography scale
 - Create design tokens file
@@ -127,8 +207,8 @@ Set up NativeWind (Tailwind CSS for React Native) and create the foundational de
 
 ```bash
 # 1. Install NativeWind and dependencies
-npm install nativewind
-npm install --save-dev tailwindcss@3.3.2
+npm install nativewind@^4.1.0
+npm install --save-dev tailwindcss@^3.4.0
 
 # 2. Initialize Tailwind
 npx tailwindcss init
@@ -424,9 +504,13 @@ Set up i18next with react-i18next for internationalization, including English an
 #### Implementation Steps
 
 ```bash
-# Install i18next dependencies
-npm install i18next react-i18next
+# Install i18next dependencies (use latest versions)
+npm install i18next@latest react-i18next@latest
 npx expo install expo-localization
+
+# At time of writing (Oct 2025):
+# i18next@24.2.3+
+# react-i18next@16.0.1+
 ```
 
 **src/lib/i18n/index.ts:**
@@ -699,10 +783,13 @@ Configure TanStack Query (React Query) for server state management, caching, and
 #### Implementation Steps
 
 ```bash
-# Install React Query
-npm install @tanstack/react-query
-npm install @tanstack/react-query-persist-client
+# Install React Query (TanStack Query v5+)
+npm install @tanstack/react-query@latest
+npm install @tanstack/react-query-persist-client@latest
 npx expo install @react-native-async-storage/async-storage
+
+# Note: Use @tanstack/react-query, NOT the deprecated react-query package
+# At time of writing (Oct 2025): @tanstack/react-query@5.90.5+
 ```
 
 **src/lib/query/queryClient.ts:**
@@ -904,8 +991,15 @@ Set up react-native-mmkv for fast, synchronous local storage as an alternative t
 #### Implementation Steps
 
 ```bash
-# Install MMKV
-npx expo install react-native-mmkv
+# Install MMKV (v4 requires New Architecture)
+# If NOT using New Architecture, use v3.x
+npx expo install react-native-mmkv@latest
+
+# For New Architecture (Fabric/TurboModules):
+npm install react-native-mmkv@^4.0.0 react-native-nitro-modules
+
+# For older architecture, use v3.x:
+# npm install react-native-mmkv@^3.2.0
 ```
 
 **src/lib/storage/mmkv.ts:**
@@ -1645,9 +1739,12 @@ export { Icon } from './Icon';
 export type { ButtonVariant, ButtonSize } from './Button';
 ```
 
-**Install required dependency:**
+**Install required dependencies:**
 ```bash
-npx expo install react-native-reanimated @expo/vector-icons
+# IMPORTANT: Install Reanimated v3.x (NOT v4!) for NativeWind v4 compatibility
+npx expo install react-native-reanimated@~3.17.4 @expo/vector-icons
+
+# DO NOT use @latest for Reanimated - it will install v4 which is incompatible with NativeWind v4
 ```
 
 **Update babel.config.js for Reanimated:**
@@ -1656,9 +1753,15 @@ module.exports = function(api) {
   api.cache(true);
   return {
     presets: ['babel-preset-expo'],
+    // Reanimated plugin must be listed last
     plugins: ['react-native-reanimated/plugin'],
   };
 };
+```
+
+**⚠️ Critical:** After updating babel.config.js, clear cache:
+```bash
+npx expo start --clear
 ```
 
 #### Acceptance Criteria
@@ -1952,7 +2055,7 @@ export const StarDisplay: React.FC<StarDisplayProps> = ({ count }) => {
 Create a robust audio playback system for word pronunciation, sound effects, and background music.
 
 #### Technical Details
-- Use expo-av for audio playback
+- Use expo-audio (SDK 53+) or expo-av (SDK 52 and below) for audio playback
 - Implement preloading for faster playback
 - Support multiple audio formats (mp3, m4a)
 - Handle audio interruptions (calls, etc.)
@@ -1962,6 +2065,15 @@ Create a robust audio playback system for word pronunciation, sound effects, and
 
 ```bash
 # Install audio dependencies
+
+# For Expo SDK 53+ (recommended - better performance)
+npx expo install expo-audio
+
+# For Expo SDK 52 and below
+# npx expo install expo-av
+
+# Note: This guide uses expo-av for broader compatibility
+# Migrate to expo-audio when using SDK 53+
 npx expo install expo-av
 ```
 
