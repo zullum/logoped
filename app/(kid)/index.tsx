@@ -10,7 +10,7 @@ import { useRewards } from '@/hooks/useRewards';
 interface Activity {
   id: string;
   titleKey: string;
-  icon: 'images-outline' | 'musical-notes-outline' | 'radio-button-on-outline' | 'book-outline';
+  icon: 'images-outline' | 'musical-notes-outline' | 'radio-button-on-outline' | 'book-outline' | 'grid-outline';
   color: string;
   route: string;
 }
@@ -43,6 +43,13 @@ const activities: Activity[] = [
     icon: 'book-outline',
     color: 'bg-coral-500',
     route: '/(kid)/activities/story-time',
+  },
+  {
+    id: 'memory-game',
+    titleKey: 'kid.activities.memoryGame',
+    icon: 'grid-outline',
+    color: 'bg-lavender-500',
+    route: '/(kid)/activities/memory-game',
   },
 ];
 

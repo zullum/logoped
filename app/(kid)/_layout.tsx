@@ -16,6 +16,7 @@ export default function KidLayout() {
       <Stack.Screen name="activities/sound-matching/index" />
       <Stack.Screen name="activities/bubble-pop/index" />
       <Stack.Screen name="activities/story-time/index" />
+      <Stack.Screen name="activities/memory-game/index" />
       <Stack.Screen name="rewards/index" />
     </Stack>
   );
