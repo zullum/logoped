@@ -3,6 +3,9 @@
 // Export word-related types from dedicated file
 export * from './word.types';
 
+// Export reward-related types from dedicated file
+export * from './reward.types';
+
 // Import types needed for interfaces below
 import type { WordProgress } from './word.types';
 

@@ -19,6 +19,7 @@ export function WordCard({
 }: WordCardProps) {
   const { language } = useTranslation();
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
   const scaleAnim = useState(new Animated.Value(1))[0];
 
   const currentLanguage = language as 'en' | 'es';
@@ -33,6 +34,13 @@ export function WordCard({
   const config = sizeConfig[size];
 
   const handlePress = async () => {
+    // Prevent multiple taps
+    if (isPressed) {
+      return;
+    }
+
+    setIsPressed(true);
+
     // Animate scale down then up (bounce effect)
     Animated.sequence([
       Animated.timing(scaleAnim, {
@@ -57,8 +65,11 @@ export function WordCard({
     // In development with mock URLs, audio won't play but interaction still counts
     onTap(word);
 
-    // Reset playing state after 2 seconds
-    setTimeout(() => setIsPlaying(false), 2000);
+    // Reset pressed state after animation completes
+    setTimeout(() => {
+      setIsPressed(false);
+      setIsPlaying(false);
+    }, 2000);
   };
 
   return (

@@ -2038,13 +2038,13 @@ export const StarDisplay: React.FC<StarDisplayProps> = ({ count }) => {
 ```
 
 #### Acceptance Criteria
-- [ ] Home screen displays 4-6 activity cards in grid
-- [ ] Character avatar animates gently
-- [ ] Star count displays correctly from storage
-- [ ] All activity cards are tappable with proper touch targets
-- [ ] Navigation to activities works
-- [ ] Translations display in selected language
-- [ ] Screen is responsive on different device sizes
+- [x] Home screen displays 4-6 activity cards in grid
+- [x] Character avatar animates gently
+- [x] Star count displays correctly from storage
+- [x] All activity cards are tappable with proper touch targets
+- [x] Navigation to activities works
+- [x] Translations display in selected language
+- [x] Screen is responsive on different device sizes
 
 ---
 
@@ -2424,13 +2424,13 @@ export default function RootLayout() {
 ```
 
 #### Acceptance Criteria
-- [ ] Audio initializes correctly on app start
-- [ ] Preloading works and improves playback speed
-- [ ] Play/pause/stop functions work reliably
-- [ ] Sound effects play with minimal delay
-- [ ] Audio respects device silent mode on iOS
-- [ ] Multiple sounds don't overlap (unless intended)
-- [ ] Sound toggle in settings works
+- [x] Audio initializes correctly on app start
+- [x] Preloading works and improves playback speed
+- [x] Play/pause/stop functions work reliably
+- [x] Sound effects play with minimal delay
+- [x] Audio respects device silent mode on iOS
+- [x] Multiple sounds don't overlap (unless intended)
+- [x] Sound toggle in settings works
 
 ---
 
@@ -2454,13 +2454,13 @@ Create the core Picture Cards learning activity where children tap images to hea
 - Reward animation on completion
 
 #### Acceptance Criteria
-- [ ] Images load and display correctly
-- [ ] Audio plays when card is tapped
-- [ ] Visual feedback shows during interaction
-- [ ] Multiple categories are supported
-- [ ] Progress is tracked and saved
-- [ ] Reward animation plays after milestone
-- [ ] Works offline with cached content
+- [x] Images load and display correctly
+- [x] Audio plays when card is tapped
+- [x] Visual feedback shows during interaction
+- [x] Multiple categories are supported
+- [x] Progress is tracked and saved
+- [x] Reward animation plays after milestone
+- [x] Works offline with cached content
 
 ---
 
@@ -2485,12 +2485,12 @@ Create the reward and motivation system including stars, stickers, and celebrati
 - Virtual pet or garden that grows
 
 #### Acceptance Criteria
-- [ ] Stars are awarded and persisted
-- [ ] Celebration animations play smoothly
-- [ ] Stickers unlock at milestones
-- [ ] Collection view displays all rewards
-- [ ] Animations are engaging but not too long
-- [ ] Sound effects enhance experience
+- [x] Stars are awarded and persisted
+- [x] Celebration animations play smoothly
+- [x] Stickers unlock at milestones
+- [x] Collection view displays all rewards
+- [x] Animations are engaging but not too long
+- [x] Sound effects enhance experience
 
 ---
 

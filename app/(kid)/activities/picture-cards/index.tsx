@@ -4,9 +4,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Button } from '@/components/ui';
-import { WordCard, CategorySelector, ProgressIndicator, RewardAnimation } from '@/components/kid/picture-cards';
+import { WordCard, CategorySelector, ProgressIndicator } from '@/components/kid/picture-cards';
+import { CelebrationModal } from '@/components/kid';
+import { SubtleRewardDisplay } from '@/components/kid/SubtleRewardDisplay';
 import { useWordsByCategory } from '@/features/words';
 import { useWordProgress } from '@/features/words/hooks/useWordProgress';
+import { useRewards } from '@/hooks/useRewards';
+import { REWARD_AMOUNTS } from '@/constants/rewards';
 import type { WordCategory, Word } from '@/types';
 
 export default function PictureCardsScreen() {
@@ -19,8 +23,15 @@ export default function PictureCardsScreen() {
   // Session state
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [practiceCount, setPracticeCount] = useState(0);
-  const [showReward, setShowReward] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [sessionStarsEarned, setSessionStarsEarned] = useState(0);
+
+  // Reward system
+  const { awardStars, awardStarsSilent, celebration, clearCelebration, updateStreak } = useRewards();
+
+  // Subtle reward display state
+  const [showSubtleReward, setShowSubtleReward] = useState(false);
+  const [subtleRewardStars, setSubtleRewardStars] = useState(0);
 
   // Category order for "next" navigation
   const categoryOrder: WordCategory[] = ['animals', 'food', 'family', 'toys', 'colors', 'body'];
@@ -45,13 +56,26 @@ export default function PictureCardsScreen() {
     // Record successful practice
     await recordAttempt(word.id, true);
 
-    setPracticeCount((prev) => prev + 1);
+    // Award stars silently (persisted but no big modal)
+    awardStarsSilent(
+      REWARD_AMOUNTS.WORD_LEARNED,
+      `Practiced word: ${word.text}`,
+      'picture-cards'
+    );
 
-    // Check if milestone reached (every 5 words)
-    if ((practiceCount + 1) % 5 === 0) {
-      setShowReward(true);
-      setTimeout(() => setShowReward(false), 3000);
-    }
+    // Track session stars earned
+    setSessionStarsEarned(prev => prev + REWARD_AMOUNTS.WORD_LEARNED);
+
+    // Show subtle reward display
+    setSubtleRewardStars(REWARD_AMOUNTS.WORD_LEARNED);
+    setShowSubtleReward(true);
+
+    // Clear after animation
+    setTimeout(() => {
+      setShowSubtleReward(false);
+    }, 2500);
+
+    setPracticeCount((prev) => prev + 1);
   };
 
   // Navigate to next word
@@ -59,12 +83,19 @@ export default function PictureCardsScreen() {
     if (currentWordIndex < totalWords - 1) {
       setCurrentWordIndex((prev) => prev + 1);
     } else {
-      // Completed all words in category
-      setShowReward(true);
-      setTimeout(() => {
-        setShowReward(false);
-        setIsCompleted(true);
-      }, 3000);
+      // Completed all words in category - award completion bonus
+      const completionBonus = REWARD_AMOUNTS.CATEGORY_COMPLETED;
+      const totalSessionStars = sessionStarsEarned + completionBonus;
+
+      // Award completion bonus but show total session stars in celebration
+      awardStars(
+        completionBonus,
+        `Completed ${selectedCategory} category! You earned ${totalSessionStars} stars this session!`,
+        'picture-cards',
+        totalSessionStars // Display total session stars in modal
+      );
+
+      setIsCompleted(true);
     }
   };
 
@@ -96,6 +127,11 @@ export default function PictureCardsScreen() {
     setPracticeCount(0);
     setIsCompleted(false);
   };
+
+  // Update streak when component mounts
+  useEffect(() => {
+    updateStreak();
+  }, [updateStreak]);
 
   // Reset when category changes
   useEffect(() => {
@@ -231,8 +267,21 @@ export default function PictureCardsScreen() {
         )}
       </ScrollView>
 
-      {/* Reward Animation Overlay */}
-      {showReward && <RewardAnimation />}
+      {/* Subtle reward for word taps */}
+      {showSubtleReward && (
+        <SubtleRewardDisplay
+          key={`reward-${Date.now()}`} // Unique key to prevent component reuse
+          starsEarned={subtleRewardStars}
+          onComplete={() => setShowSubtleReward(false)}
+        />
+      )}
+
+      {/* Big celebration modal for category completion */}
+      <CelebrationModal
+        visible={!!celebration}
+        celebration={celebration}
+        onClose={clearCelebration}
+      />
     </SafeAreaView>
   );
 }

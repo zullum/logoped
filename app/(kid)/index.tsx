@@ -6,7 +6,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { Card } from '@/components/ui/Card';
 import { Icon } from '@/components/ui/Icon';
 import { CharacterAvatar, StarDisplay } from '@/components/kid';
-import { useMMKVNumberState, STORAGE_KEYS } from '@/lib/storage';
+import { useRewards } from '@/hooks/useRewards';
 
 interface Activity {
   id: string;
@@ -50,7 +50,7 @@ const activities: Activity[] = [
 export default function KidHomeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const [totalStars] = useMMKVNumberState(STORAGE_KEYS.TOTAL_STARS);
+  const { totalStars } = useRewards();
 
   return (
     <SafeAreaView className="flex-1 bg-background-light" edges={['top', 'left', 'right']}>
