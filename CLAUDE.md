@@ -15,16 +15,26 @@ Logoped is a speech therapy mobile app for children aged 3-7, built with Expo, R
 
 ## Critical Package Version Constraints
 
+⚠️ **New Architecture Enabled**: This project uses React Native's New Architecture
+- `"newArchEnabled": true` in app.json
+- Requires compatible packages that support New Architecture
+- All new packages must be verified for New Architecture compatibility
+
 ⚠️ **React Native Reanimated**: Must use v4.1.1+ (v4.x)
-- Reason: This project has New Architecture enabled (`"newArchEnabled": true` in app.json)
-- NativeWind v4 with New Architecture requires Reanimated v4.x
+- Reason: New Architecture is enabled and requires Reanimated v4.x
+- NativeWind v4 is compatible with Reanimated v4.x when New Architecture is enabled
 - Install: `npx expo install react-native-reanimated`
+- Never downgrade to v3.x as it's incompatible with New Architecture
 
 ⚠️ **React Version**: Must use React 19.1.0 with Expo SDK 54
 - react@19.1.0
 - react-dom@19.1.0
 - @types/react@~19.1.0
 - @types/react-dom@~19.1.0
+
+⚠️ **Metro Bundler Configuration**: Custom cache directory setup
+- Cache directory explicitly set in metro.config.js for consistent builds
+- Do not modify metro.config.js without understanding the NativeWind integration
 
 ## Common Development Commands
 
@@ -278,11 +288,33 @@ Per TECHNICAL_PLAN.md, these will be added:
 - Phonetic progression (simple → complex sounds)
 - 5 difficulty levels (ages 3-7, sound exploration → conversation)
 
+## Implementation Status
+
+**Current Phase**: Phase 1 (Foundation) - Complete
+- ✅ Story 1.1: Expo project initialized with TypeScript
+- ✅ Story 1.2: NativeWind v4 configured with design system
+- ✅ Story 1.3: Google Fonts (Quicksand, Nunito) installed and configured
+- 🔄 Ready for Phase 2: Kid Mode Core features
+
+**What's Implemented**:
+- Expo Router file-based routing structure
+- NativeWind styling system with custom design tokens
+- TypeScript path aliases (@components, @hooks, etc.)
+- Font loading with SplashScreen management
+- Complete color palette and typography system in tailwind.config.js
+
+**What's Next** (Per TECHNICAL_PLAN.md):
+- Phase 2: Kid Mode Core (Stories 2.1-2.7)
+- Word database and content structure
+- First learning activities (Picture Cards, Sound Matching)
+- Basic reward system
+- Audio playback functionality
+
 ## Key Documentation References
 
 - **Project Requirements**: `PROJECT_REQUIREMENTS.md` - Comprehensive requirements document
 - **Technical Plan**: `TECHNICAL_PLAN.md` - 35 detailed implementation stories across 7 phases
-- **Current Phase**: Phase 1 (Foundation) - Stories 1.1-1.3 completed (Expo init, NativeWind, Google Fonts)
+- **Design System**: `tailwind.config.js` - Complete color, typography, and spacing tokens
 
 ## Testing and Quality
 
@@ -297,10 +329,26 @@ Ensure no TypeScript errors before pushing code.
 
 1. **New Architecture Enabled**: This project uses React Native's New Architecture (`"newArchEnabled": true`)
    - Requires React Native Reanimated v4.x (not v3.x)
-   - Ensure all packages are compatible with New Architecture
+   - Ensure all packages are compatible with New Architecture before installation
+   - Some older libraries may not support New Architecture - check compatibility first
+
 2. **Font Loading**: App requires fonts loaded before render - handled in `_layout.tsx`
+   - SplashScreen is kept visible until fonts load
+   - Always import `../global.css` in root layout for NativeWind styles
+   - Font loading pattern must not be modified without understanding implications
+
 3. **NativeWind + Fonts**: Font weights must use inline `style={{ fontFamily }}`, not Tailwind classes
+   - Correct: `style={{ fontFamily: 'Quicksand_700Bold' }}`
+   - Incorrect: `className="font-quicksand-bold"` (won't work as expected)
+   - Font family classes in tailwind.config.js are reference only
+
 4. **Package Versions**: Always use `npx expo install --fix` after adding packages to ensure compatibility
+   - Expo SDK 54 has specific package version requirements
+   - Using incompatible versions will cause runtime errors
+
+5. **Metro Bundler Cache**: Custom cache directory configuration
+   - Cache is set to `node_modules/.cache` for consistent build behavior
+   - If build issues occur, try: `npx expo start --clear`
 
 ## Getting Help
 
