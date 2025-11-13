@@ -1,0 +1,63 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try Again",
+    "continue": "Continue",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
+  "kid": {
+    "home": {
+      "title": "Let's Learn!",
+      "todayChallenge": "Today's Challenge",
+      "freePlay": "Free Play",
+      "myProgress": "My Progress"
+    },
+    "activities": {
+      "pictureCards": "Picture Cards",
+      "soundMatching": "Sound Matching",
+      "bubblePop": "Bubble Pop",
+      "storyTime": "Story Time",
+      "singAlong": "Sing Along",
+      "memoryGame": "Memory Game",
+      "mirrorPractice": "Mirror Practice"
+    },
+    "rewards": {
+      "greatJob": "Great Job!",
+      "youEarned": "You earned {{count}} stars!",
+      "keepGoing": "Keep going!",
+      "newSticker": "New sticker unlocked!"
+    }
+  },
+  "parent": {
+    "dashboard": {
+      "title": "Progress Dashboard",
+      "wordsLearned": "Words Learned",
+      "timeSpent": "Time Spent",
+      "currentStreak": "Current Streak",
+      "weeklyProgress": "Weekly Progress"
+    },
+    "settings": {
+      "title": "Settings",
+      "childProfile": "Child Profile",
+      "language": "Language",
+      "difficulty": "Difficulty Level",
+      "focusAreas": "Focus Areas",
+      "notifications": "Notifications"
+    }
+  },
+  "words": {
+    "categories": {
+      "animals": "Animals",
+      "food": "Food",
+      "family": "Family",
+      "toys": "Toys",
+      "colors": "Colors",
+      "body": "Body Parts"
+    }
+  }
+}

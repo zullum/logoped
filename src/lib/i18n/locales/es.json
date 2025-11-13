@@ -1,0 +1,63 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "error": "Algo salió mal",
+    "retry": "Intentar de Nuevo",
+    "continue": "Continuar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "done": "Hecho",
+    "cancel": "Cancelar",
+    "save": "Guardar"
+  },
+  "kid": {
+    "home": {
+      "title": "¡Vamos a Aprender!",
+      "todayChallenge": "Desafío de Hoy",
+      "freePlay": "Juego Libre",
+      "myProgress": "Mi Progreso"
+    },
+    "activities": {
+      "pictureCards": "Tarjetas con Imágenes",
+      "soundMatching": "Emparejar Sonidos",
+      "bubblePop": "Explotar Burbujas",
+      "storyTime": "Hora del Cuento",
+      "singAlong": "Cantar Juntos",
+      "memoryGame": "Juego de Memoria",
+      "mirrorPractice": "Práctica con Espejo"
+    },
+    "rewards": {
+      "greatJob": "¡Muy Bien!",
+      "youEarned": "¡Ganaste {{count}} estrellas!",
+      "keepGoing": "¡Sigue así!",
+      "newSticker": "¡Nueva calcomanía desbloqueada!"
+    }
+  },
+  "parent": {
+    "dashboard": {
+      "title": "Panel de Progreso",
+      "wordsLearned": "Palabras Aprendidas",
+      "timeSpent": "Tiempo Dedicado",
+      "currentStreak": "Racha Actual",
+      "weeklyProgress": "Progreso Semanal"
+    },
+    "settings": {
+      "title": "Configuración",
+      "childProfile": "Perfil del Niño",
+      "language": "Idioma",
+      "difficulty": "Nivel de Dificultad",
+      "focusAreas": "Áreas de Enfoque",
+      "notifications": "Notificaciones"
+    }
+  },
+  "words": {
+    "categories": {
+      "animals": "Animales",
+      "food": "Comida",
+      "family": "Familia",
+      "toys": "Juguetes",
+      "colors": "Colores",
+      "body": "Partes del Cuerpo"
+    }
+  }
+}
