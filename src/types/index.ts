@@ -1,5 +1,11 @@
 // Common TypeScript type definitions
 
+// Export word-related types from dedicated file
+export * from './word.types';
+
+// Import types needed for interfaces below
+import type { WordProgress } from './word.types';
+
 export interface ChildProfile {
   id: string;
   name: string;
@@ -20,29 +26,6 @@ export interface AvatarCustomization {
   accessories: string[];
 }
 
-export interface Word {
-  id: string;
-  text: string;
-  translations: Record<string, string>;
-  phonetic: string;
-  syllableCount: number;
-  category: WordCategory;
-  difficulty: 1 | 2 | 3 | 4 | 5;
-  imageUrl: string;
-  audioUrl: Record<string, string>;
-  animationUrl?: string;
-}
-
-export type WordCategory =
-  | 'animals'
-  | 'food'
-  | 'family'
-  | 'toys'
-  | 'colors'
-  | 'body'
-  | 'actions'
-  | 'objects';
-
 export interface UserProgress {
   userId: string;
   wordsLearned: WordProgress[];
@@ -51,14 +34,6 @@ export interface UserProgress {
   totalStars: number;
   currentStreak: number;
   achievements: Achievement[];
-}
-
-export interface WordProgress {
-  wordId: string;
-  attempts: number;
-  successRate: number;
-  lastPracticed: Date;
-  masteryLevel: 'new' | 'learning' | 'practicing' | 'mastered';
 }
 
 export interface PhonemeProgress {

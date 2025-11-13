@@ -26,6 +26,27 @@
       "memoryGame": "Juego de Memoria",
       "mirrorPractice": "Práctica con Espejo"
     },
+    "pictureCards": {
+      "chooseCategory": "Elige una categoría:",
+      "progress": "Progreso",
+      "wordsPlayed": "{{count}} palabras jugadas",
+      "next": "Siguiente Palabra",
+      "finish": "Terminar",
+      "noWords": "No hay palabras disponibles en esta categoría",
+      "allDone": "¡Todo Listo!",
+      "completedCategory": "¡Completaste esta categoría!",
+      "retry": "Jugar Otra Vez",
+      "nextCategory": "Siguiente Categoría",
+      "goHome": "Ir al Inicio"
+    },
+    "categories": {
+      "animals": "Animales",
+      "food": "Comida",
+      "family": "Familia",
+      "toys": "Juguetes",
+      "colors": "Colores",
+      "body": "Cuerpo"
+    },
     "rewards": {
       "greatJob": "¡Muy Bien!",
       "youEarned": "¡Ganaste {{count}} estrellas!",
