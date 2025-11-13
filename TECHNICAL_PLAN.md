@@ -2464,37 +2464,7 @@ Create the core Picture Cards learning activity where children tap images to hea
 
 ---
 
-### Story 2.4: Implement Reward System
-**Priority:** High | **Effort:** 6 hours | **Dependencies:** 2.1
-
-#### Description
-Create the reward and motivation system including stars, stickers, and celebration animations.
-
-#### Technical Details
-- Star earning on activity completion
-- Sticker collection system
-- Celebration animations using Lottie
-- Achievement unlocking
-- Progress persistence
-
-#### Key Features
-- Animated star collection
-- Sticker album/collection view
-- Celebratory confetti/balloon animations
-- Sound effects for achievements
-- Virtual pet or garden that grows
-
-#### Acceptance Criteria
-- [x] Stars are awarded and persisted
-- [x] Celebration animations play smoothly
-- [x] Stickers unlock at milestones
-- [x] Collection view displays all rewards
-- [x] Animations are engaging but not too long
-- [x] Sound effects enhance experience
-
----
-
-### Story 2.5: Create Word Content Database
+### Story 2.4: Create Word Content Database
 **Priority:** Critical | **Effort:** 10 hours | **Dependencies:** None
 
 #### Description
@@ -2521,6 +2491,36 @@ Build initial word content library with 100+ words across categories with images
 - [ ] Both English and Spanish audio recorded
 - [ ] Content organized in structured JSON/database
 - [ ] Words tagged with appropriate difficulty levels
+
+---
+
+### Story 2.5: Implement Reward System
+**Priority:** High | **Effort:** 6 hours | **Dependencies:** 2.1
+
+#### Description
+Create the reward and motivation system including stars, stickers, and celebration animations.
+
+#### Technical Details
+- Star earning on activity completion
+- Sticker collection system
+- Celebration animations using Lottie
+- Achievement unlocking
+- Progress persistence
+
+#### Key Features
+- Animated star collection
+- Sticker album/collection view
+- Celebratory confetti/balloon animations
+- Sound effects for achievements
+- Virtual pet or garden that grows
+
+#### Acceptance Criteria
+- [x] Stars are awarded and persisted
+- [x] Celebration animations play smoothly
+- [x] Stickers unlock at milestones
+- [x] Collection view displays all rewards
+- [x] Animations are engaging but not too long
+- [x] Sound effects enhance experience
 
 ---
 
@@ -3393,8 +3393,8 @@ Complete final quality assurance testing and submit to App Store and Google Play
 - [ ] 2.1 Kid Mode Home Screen
 - [ ] 2.2 Audio Playback System
 - [ ] 2.3 Picture Cards Activity
-- [ ] 2.4 Reward System
-- [ ] 2.5 Word Content Database (100+ words)
+- [ ] 2.4 Create Word Content Database (100+ words)
+- [ ] 2.5 Implement Reward System
 
 ### Phase 3: Advanced Activities ✓
 - [ ] 3.1 Sound Matching Game

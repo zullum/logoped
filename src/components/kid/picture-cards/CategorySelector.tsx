@@ -1,5 +1,12 @@
-import React from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import React, { useRef, useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  Pressable,
+  ScrollView,
+  LayoutChangeEvent,
+  Dimensions,
+} from 'react-native';
 import type { WordCategory } from '@/types';
 import { useTranslation } from '@/hooks/useTranslation';
 
@@ -52,11 +59,41 @@ const categories: Array<{
   },
 ];
 
+const { width: screenWidth } = Dimensions.get('window');
+
 export function CategorySelector({
   selectedCategory,
   onCategoryChange,
 }: CategorySelectorProps) {
   const { t } = useTranslation();
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [itemLayouts, setItemLayouts] = useState<
+    Map<WordCategory, { x: number; width: number }>
+  >(new Map());
+
+  useEffect(() => {
+    const selectedLayout = itemLayouts.get(selectedCategory);
+
+    if (selectedLayout && scrollViewRef.current) {
+      const { x, width } = selectedLayout;
+      // Calculate the position to center the item
+      const scrollX = x + width / 2 - screenWidth / 2;
+
+      scrollViewRef.current.scrollTo({
+        x: Math.max(0, scrollX), // Ensure we don't scroll to a negative position
+        animated: true,
+      });
+    }
+  }, [selectedCategory, itemLayouts]);
+
+  const handleItemLayout = (
+    event: LayoutChangeEvent,
+    categoryId: WordCategory
+  ) => {
+    const { x, width } = event.nativeEvent.layout;
+    // Use a functional update to avoid stale state
+    setItemLayouts((prev) => new Map(prev).set(categoryId, { x, width }));
+  };
 
   return (
     <View className="mb-md">
@@ -68,14 +105,14 @@ export function CategorySelector({
       </Text>
 
       <ScrollView
+        ref={scrollViewRef}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 4 }}
+        contentContainerStyle={{ paddingHorizontal: 16 }}
       >
-        {categories.map((category, index) => {
+        {categories.map((category) => {
           const isSelected = selectedCategory === category.id;
 
-          // Color mapping for selected state
           const colorMap: Record<string, string> = {
             'bg-primary-500': '#4A90E2',
             'bg-coral-500': '#EF476F',
@@ -86,10 +123,14 @@ export function CategorySelector({
 
           const backgroundColor = isSelected
             ? colorMap[category.color]
-            : '#F3F4F6'; // gray-100
+            : '#F3F4F6';
 
           return (
-            <View key={category.id} style={{ marginRight: 8 }}>
+            <View
+              key={category.id}
+              style={{ marginRight: 8 }}
+              onLayout={(event) => handleItemLayout(event, category.id)}
+            >
               <Pressable
                 onPress={() => onCategoryChange(category.id)}
                 accessibilityLabel={`${t(category.nameKey)} category`}

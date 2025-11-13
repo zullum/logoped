@@ -48,6 +48,12 @@
       "body": "Cuerpo"
     },
     "rewards": {
+      "title": "Mi Colección",
+      "stickersTab": "Calcomanías",
+      "achievementsTab": "Logros",
+      "stickersStat": "Calcomanías",
+      "achievementsStat": "Logros",
+      "streakStat": "Racha de Días",
       "greatJob": "¡Muy Bien!",
       "youEarned": "¡Ganaste {{count}} estrellas!",
       "keepGoing": "¡Sigue así!",

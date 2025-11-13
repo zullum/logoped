@@ -48,6 +48,12 @@
       "body": "Body"
     },
     "rewards": {
+      "title": "My Collection",
+      "stickersTab": "Stickers",
+      "achievementsTab": "Achievements",
+      "stickersStat": "Stickers",
+      "achievementsStat": "Achievements",
+      "streakStat": "Day Streak",
       "greatJob": "Great Job!",
       "youEarned": "You earned {{count}} stars!",
       "keepGoing": "Keep going!",

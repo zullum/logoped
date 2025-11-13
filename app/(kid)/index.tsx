@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, FlatList, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from '@/hooks/useTranslation';
-import { Card } from '@/components/ui/Card';
-import { Icon } from '@/components/ui/Icon';
+import { Card, Icon } from '@/components/ui';
 import { CharacterAvatar, StarDisplay } from '@/components/kid';
 import { useRewards } from '@/hooks/useRewards';
 
@@ -52,70 +51,83 @@ export default function KidHomeScreen() {
   const router = useRouter();
   const { totalStars } = useRewards();
 
-  return (
-    <SafeAreaView className="flex-1 bg-background-light" edges={['top', 'left', 'right']}>
-      <ScrollView className="flex-1" contentContainerClassName="p-lg">
-        {/* Header with Avatar and Stars */}
-        <View className="flex-row justify-between items-center mb-xl">
-          <View>
-            <Text
-              className="text-3xl text-text-dark"
-              style={{ fontFamily: 'Quicksand_700Bold' }}
-            >
-              {t('kid.home.title')}
-            </Text>
+  const renderActivityCard = ({ item }: { item: Activity }) => {
+    return (
+      <View className="flex-1 p-2">
+        <Card
+          onPress={() => router.push(item.route as any)}
+          className="aspect-square items-center justify-center"
+        >
+          <View
+            className={`
+              ${item.color}
+              w-20 h-20
+              rounded-full
+              items-center
+              justify-center
+              mb-md
+            `}
+          >
+            <Icon name={item.icon} size={40} color="white" />
           </View>
-          <View className="flex-row items-center gap-4">
-            <StarDisplay count={totalStars || 0} />
-            <CharacterAvatar size={60} />
-          </View>
-        </View>
-
-        {/* Activities Grid */}
-        <View className="gap-md">
           <Text
-            className="text-xl text-text-dark mb-sm"
+            className="text-lg text-text-dark text-center"
             style={{ fontFamily: 'Quicksand_600SemiBold' }}
           >
-            {t('kid.home.todayChallenge')}
+            {t(item.titleKey)}
           </Text>
+        </Card>
+      </View>
+    );
+  };
 
-          <View className="flex-row flex-wrap gap-md">
-            {activities.map((activity) => (
-              <View key={activity.id} className="w-[48%]">
-                <Card
-                  onPress={() => router.push(activity.route as any)}
-                  className="aspect-square items-center justify-center"
-                  padding="medium"
-                >
-                  <View
-                    className={`
-                      ${activity.color}
-                      w-20 h-20
-                      rounded-full
-                      items-center
-                      justify-center
-                      mb-md
-                    `}
-                  >
-                    <Icon
-                      name={activity.icon}
-                      size={40}
-                      color="white"
-                    />
-                  </View>
-                  <Text
-                    className="text-lg text-text-dark text-center"
-                    style={{ fontFamily: 'Quicksand_600SemiBold' }}
-                  >
-                    {t(activity.titleKey)}
-                  </Text>
-                </Card>
-              </View>
-            ))}
+  const ListHeader = () => {
+    const { t } = useTranslation();
+    const router = useRouter();
+    const { totalStars } = useRewards();
+
+    return (
+      <View className="px-4 pt-4 mb-lg">
+        {/* Header with Avatar and Stars */}
+        <View className="flex-col">
+          <Text
+            className="text-3xl text-text-dark mb-2"
+            style={{ fontFamily: 'Quicksand_700Bold' }}
+          >
+            {t('kid.home.title')}
+          </Text>
+          <View className="flex-row items-center justify-end gap-2">
+            <Pressable onPress={() => router.push('/(kid)/rewards')}>
+              <Card className="p-2">
+                <Icon name="ribbon-outline" size={28} color="#4A90E2" />
+              </Card>
+            </Pressable>
+            <StarDisplay count={totalStars || 0} />
+            <CharacterAvatar size={50} />
           </View>
         </View>
-      </ScrollView>
+
+        {/* Sub-header */}
+        <Text
+          className="text-xl text-text-dark mt-lg mb-sm"
+          style={{ fontFamily: 'Quicksand_600SemiBold' }}
+        >
+          {t('kid.home.todayChallenge')}
+        </Text>
+      </View>
+    );
+  };
+
+  return (
+    <SafeAreaView className="flex-1 bg-background-light" edges={['top', 'left', 'right']}>
+      <FlatList
+        data={activities}
+        renderItem={renderActivityCard}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        ListHeaderComponent={<ListHeader />}
+        contentContainerClassName="pb-lg"
+      />
     </SafeAreaView>
   );
 }

@@ -8,6 +8,8 @@ import Animated, {
   withDelay,
 } from 'react-native-reanimated';
 
+import { formatCompactNumber } from '@/lib/utils/format';
+
 interface StarDisplayProps {
   count: number;
 }
@@ -39,7 +41,7 @@ export const StarDisplay: React.FC<StarDisplayProps> = ({ count }) => {
         className="text-xl text-white ml-2"
         style={{ fontFamily: 'Quicksand_700Bold' }}
       >
-        {count}
+        {formatCompactNumber(count)}
       </Text>
     </Animated.View>
   );

@@ -128,7 +128,7 @@ export default function RewardsScreen() {
           className="text-2xl font-quicksand-bold text-text-dark"
           style={{ fontFamily: 'Quicksand_700Bold' }}
         >
-          My Collection
+          {t('kid.rewards.title')}
         </Text>
 
         <StarDisplay count={totalStars} />
@@ -150,7 +150,7 @@ export default function RewardsScreen() {
             className="text-sm font-nunito-regular text-text-light"
             style={{ fontFamily: 'Nunito_400Regular' }}
           >
-            Stickers
+            {t('kid.rewards.stickersStat')}
           </Text>
         </View>
 
@@ -168,7 +168,7 @@ export default function RewardsScreen() {
             className="text-sm font-nunito-regular text-text-light"
             style={{ fontFamily: 'Nunito_400Regular' }}
           >
-            Achievements
+            {t('kid.rewards.achievementsStat')}
           </Text>
         </View>
 
@@ -186,7 +186,7 @@ export default function RewardsScreen() {
             className="text-sm font-nunito-regular text-text-light"
             style={{ fontFamily: 'Nunito_400Regular' }}
           >
-            Day Streak
+            {t('kid.rewards.streakStat')}
           </Text>
         </View>
       </View>
@@ -205,7 +205,7 @@ export default function RewardsScreen() {
             }`}
             style={{ fontFamily: 'Quicksand_600SemiBold' }}
           >
-            Stickers
+            {t('kid.rewards.stickersTab')}
           </Text>
         </Pressable>
 
@@ -221,7 +221,7 @@ export default function RewardsScreen() {
             }`}
             style={{ fontFamily: 'Quicksand_600SemiBold' }}
           >
-            Achievements
+            {t('kid.rewards.achievementsTab')}
           </Text>
         </Pressable>
       </View>
@@ -230,6 +230,7 @@ export default function RewardsScreen() {
       <ScrollView className="flex-1 pt-4">
         {activeTab === 'stickers' ? (
           <FlatList
+            key="stickers-list"
             data={stickers}
             renderItem={renderStickerItem}
             keyExtractor={(item) => item.id}
@@ -239,6 +240,7 @@ export default function RewardsScreen() {
           />
         ) : (
           <FlatList
+            key="achievements-list"
             data={achievements}
             renderItem={renderAchievementItem}
             keyExtractor={(item) => item.id}
