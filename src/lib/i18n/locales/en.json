@@ -41,11 +41,24 @@
     },
     "categories": {
       "animals": "Animals",
-      "food": "Food",
-      "family": "Family",
-      "toys": "Toys",
+      "body_parts": "Body Parts",
+      "clothes": "Clothes",
       "colors": "Colors",
-      "body": "Body"
+      "electronics": "Electronics",
+      "fantasy_creatures": "Fantasy Creatures",
+      "food": "Food",
+      "furniture": "Furniture",
+      "household_items": "Household Items",
+      "musical_instruments": "Musical Instruments",
+      "nature": "Nature",
+      "plants": "Plants",
+      "professions": "Professions",
+      "school_supplies": "School Supplies",
+      "shapes": "Shapes",
+      "sports_equipment": "Sports Equipment",
+      "toys": "Toys",
+      "vehicles": "Vehicles",
+      "weather": "Weather"
     },
     "rewards": {
       "title": "My Collection",

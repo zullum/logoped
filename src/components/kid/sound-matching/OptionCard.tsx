@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, View, Image, Text } from 'react-native';
+import { Pressable, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -7,7 +7,9 @@ import Animated, {
   withSequence,
   runOnJS,
 } from 'react-native-reanimated';
+import { Typography, ImageWithFallback } from '@/components/ui';
 import type { Word } from '@/types';
+import { COLORS } from '@/constants/theme';
 
 interface OptionCardProps {
   word: Word;
@@ -54,7 +56,7 @@ export const OptionCard: React.FC<OptionCardProps> = ({
 
   const borderStyle = useAnimatedStyle(() => ({
     borderWidth: borderWidth.value,
-    borderColor: isCorrect ? '#06D6A0' : '#EF476F',
+    borderColor: isCorrect ? COLORS.grass : COLORS.coral,
   }));
 
   return (
@@ -72,8 +74,10 @@ export const OptionCard: React.FC<OptionCardProps> = ({
       >
         {/* Image */}
         <View className="w-full aspect-square mb-3 rounded-2xl overflow-hidden bg-background-light">
-          <Image
-            source={{ uri: word.imageUrl }}
+          <ImageWithFallback
+            uri={word.imageUrl}
+            fallbackEmoji={word.emoji}
+            fallbackText={word.text}
             className="w-full h-full"
             resizeMode="cover"
             accessibilityLabel={word.text}
@@ -81,17 +85,14 @@ export const OptionCard: React.FC<OptionCardProps> = ({
         </View>
 
         {/* Word label (optional - can be hidden for more challenge) */}
-        <Text
-          className="text-lg text-text-dark text-center"
-          style={{ fontFamily: 'Nunito_600SemiBold' }}
-        >
+        <Typography variant="body-lg" color="dark" center>
           {word.text}
-        </Text>
+        </Typography>
 
         {/* Feedback emoji */}
         {isCorrect !== null && (
           <View className="absolute top-2 right-2 bg-white rounded-full p-2">
-            <Text className="text-3xl">{isCorrect ? '✓' : '✗'}</Text>
+            <Typography className="text-3xl">{isCorrect ? '✓' : '✗'}</Typography>
           </View>
         )}
       </Animated.View>

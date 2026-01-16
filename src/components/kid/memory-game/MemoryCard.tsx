@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Pressable, View, Image, Text } from 'react-native';
+import { Pressable, View, Text } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -8,6 +8,7 @@ import Animated, {
   interpolate,
   runOnJS,
 } from 'react-native-reanimated';
+import { ImageWithFallback } from '@/components/ui';
 
 export interface CardData {
   id: string;
@@ -15,6 +16,7 @@ export interface CardData {
   type: 'image' | 'word';
   pairId: string; // Cards with same pairId match
   imageUrl?: string;
+  emoji?: string; // Emoji fallback
 }
 
 interface MemoryCardProps {
@@ -108,8 +110,10 @@ export const MemoryCard: React.FC<MemoryCardProps> = ({
         >
           {card.type === 'image' && card.imageUrl ? (
             <View className="w-full h-full p-3">
-              <Image
-                source={{ uri: card.imageUrl }}
+              <ImageWithFallback
+                uri={card.imageUrl}
+                fallbackEmoji={card.emoji}
+                fallbackText={card.content}
                 className="w-full h-full rounded-xl"
                 resizeMode="cover"
               />

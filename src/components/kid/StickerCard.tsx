@@ -1,13 +1,14 @@
 import React from 'react';
-import { View, Text, Pressable, Image, StyleSheet } from 'react-native';
+import { View, Pressable, Image, StyleSheet } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
 } from 'react-native-reanimated';
-import { Icon } from '@/components/ui/Icon';
+import { Icon, Typography } from '@/components/ui';
 import type { Sticker } from '@/types/reward.types';
 import { RARITY_COLORS } from '@/constants/rewards';
+import { COLORS } from '@/constants/theme';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -57,7 +58,7 @@ export const StickerCard: React.FC<StickerCardProps> = ({
         {
           width: card,
           height: card,
-          borderColor: sticker.isUnlocked ? borderColor : '#E0E0E0',
+          borderColor: sticker.isUnlocked ? borderColor : COLORS.disabled,
           borderWidth: 3,
         },
       ]}
@@ -87,27 +88,28 @@ export const StickerCard: React.FC<StickerCardProps> = ({
               { backgroundColor: borderColor },
             ]}
           >
-            <Text
-              style={styles.rarityText}
-              className="text-xs text-white font-quicksand-semibold"
+            <Typography
+              variant="caption"
+              color="white"
+              style={{ textTransform: 'capitalize' }}
             >
               {sticker.rarity}
-            </Text>
+            </Typography>
           </View>
         </>
       ) : (
         <>
           {/* Locked State */}
           <View className="items-center justify-center opacity-30">
-            <Icon name="lock-closed" size={icon * 0.6} color="#999" />
+            <Icon name="lock-closed" size={icon * 0.6} color={COLORS.lockedIcon} />
           </View>
           <View className="absolute bottom-2 bg-gray-300 px-3 py-1 rounded-full">
-            <Text
-              className="text-xs text-gray-600 font-nunito-semibold"
-              style={{ fontFamily: 'Nunito_600SemiBold' }}
+            <Typography
+              variant="caption"
+              color="medium"
             >
               Locked
-            </Text>
+            </Typography>
           </View>
         </>
       )}
@@ -130,10 +132,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
-  },
-  rarityText: {
-    fontSize: 10,
-    fontFamily: 'Quicksand_600SemiBold',
-    textTransform: 'capitalize',
   },
 });

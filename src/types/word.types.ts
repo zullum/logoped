@@ -2,19 +2,30 @@
  * Word Types and Interfaces for Logoped App
  */
 
-export type LanguageCode = 'en' | 'es';
+export type LanguageCode = "en" | "es";
 
 export type WordCategory =
-  | 'animals'
-  | 'food'
-  | 'family'
-  | 'toys'
-  | 'colors'
-  | 'body'
-  | 'actions'
-  | 'objects';
+  | "animals"
+  | "body_parts"
+  | "clothes"
+  | "colors"
+  | "electronics"
+  | "fantasy_creatures"
+  | "food"
+  | "furniture"
+  | "household_items"
+  | "musical_instruments"
+  | "nature"
+  | "plants"
+  | "professions"
+  | "school_supplies"
+  | "shapes"
+  | "sports_equipment"
+  | "toys"
+  | "vehicles"
+  | "weather";
 
-export type MasteryLevel = 'new' | 'learning' | 'practicing' | 'mastered';
+export type MasteryLevel = "new" | "learning" | "practicing" | "mastered";
 
 export type DifficultyLevel = 1 | 2 | 3 | 4 | 5;
 
@@ -29,10 +40,12 @@ export interface Word {
   syllableCount: number;
   category: WordCategory;
   difficulty: DifficultyLevel;
-  imageUrl: string;
+  imageUrl: any; // Changed to support require() for local assets
+
   audioUrl: Record<LanguageCode, string>;
   animationUrl?: string;
   tags?: string[];
+  emoji?: string; // Emoji fallback for when image doesn't load
 }
 
 /**
@@ -68,6 +81,8 @@ export interface WordFilters {
   difficulty?: DifficultyLevel;
   language?: LanguageCode;
   masteryLevel?: MasteryLevel;
+  syllableCount?: number;
+  isLearned?: boolean;
   limit?: number;
   offset?: number;
 }

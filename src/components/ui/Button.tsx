@@ -1,11 +1,12 @@
 import React from 'react';
-import { Pressable, Text, ActivityIndicator, View } from 'react-native';
+import { Pressable, ActivityIndicator, View } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
 } from 'react-native-reanimated';
 import { TOUCH_TARGET } from '@/constants/theme';
+import { Typography } from './Typography';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -93,8 +94,10 @@ export const Button: React.FC<ButtonProps> = ({
           {loading ? (
             <ActivityIndicator color={styles.text === 'text-white' ? '#FFFFFF' : '#2D3748'} />
           ) : (
-            <Text
-              className={`${styles.text} ${sizing.textSize} font-quicksand-bold`}
+            <Typography
+              variant="button"
+              color={styles.text === 'text-white' ? 'white' : 'dark'}
+              className={sizing.textSize}
               style={{
                 textShadowColor: 'rgba(0, 0, 0, 0.2)',
                 textShadowOffset: { width: 0, height: 2 },
@@ -102,7 +105,7 @@ export const Button: React.FC<ButtonProps> = ({
               }}
             >
               {children}
-            </Text>
+            </Typography>
           )}
         </AnimatedPressable>
       </View>
@@ -151,9 +154,13 @@ export const Button: React.FC<ButtonProps> = ({
       {loading ? (
         <ActivityIndicator color="#4A90E2" />
       ) : (
-        <Text className={`${textColorStylesFlat[variant as 'outline' | 'ghost']} ${textSizeStyles[size]} font-nunito-semibold`}>
+        <Typography
+          variant={size === 'large' ? 'body-lg' : 'body'}
+          color={variant === 'outline' || variant === 'ghost' ? 'primary' : 'dark'}
+          style={{ fontWeight: '600' }}
+        >
           {children}
-        </Text>
+        </Typography>
       )}
     </Pressable>
   );

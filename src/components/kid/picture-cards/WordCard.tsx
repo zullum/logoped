@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, Image, Pressable } from 'react-native';
+import { View, Pressable } from 'react-native';
 import type { Word } from '@/types';
 import { useTranslation } from '@/hooks/useTranslation';
 import { audioPlayer } from '@/lib/audio/audioPlayer';
-import { Icon } from '@/components/ui';
+import { Icon, Typography, ImageWithFallback } from '@/components/ui';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -100,17 +100,19 @@ export function WordCard({
         <Animated.View style={[animatedCardStyle, { width: config.width, height: config.height }]}>
           {/* Sound Wave Animation - positioned absolutely behind the card */}
           <Animated.View
-            className={`absolute inset-0 ${config.borderRadius} border-8 border-primary-400`}
+            className={`absolute inset-0 ${config.borderRadius} border-8 border-[#D4A574]`}
             style={animatedWaveStyle}
             pointerEvents="none"
           />
 
           {/* Main Card content with overflow hidden for image clipping */}
           <View
-            className={`flex-1 ${config.borderRadius} bg-white shadow-lg overflow-hidden border-2 border-gray-200`}
+            className={`flex-1 ${config.borderRadius} bg-[#FFF9E6] shadow-lg overflow-hidden border-2 border-gray-200`}
           >
-            <Image
-              source={{ uri: word.imageUrl }}
+            <ImageWithFallback
+              uri={word.imageUrl}
+              fallbackEmoji={word.emoji}
+              fallbackText={word.text}
               className="w-full h-full"
               resizeMode="cover"
               accessibilityIgnoresInvertColors
@@ -130,20 +132,23 @@ export function WordCard({
       {/* Word Text */}
       {showText && (
         <View className="mt-md">
-          <Text
-            className={`${config.textSize} text-text-dark text-center`}
-            style={{ fontFamily: 'Quicksand_700Bold' }}
+          <Typography
+            variant={size === 'large' ? 'h4' : size === 'medium' ? 'body-lg' : 'body'}
+            color="dark"
+            center
           >
             {word.translations[currentLanguage]}
-          </Text>
+          </Typography>
 
           {/* Phonetic */}
-          <Text
-            className="text-sm text-text-medium text-center mt-xs"
-            style={{ fontFamily: 'Nunito_400Regular' }}
+          <Typography
+            variant="body-sm"
+            color="medium"
+            center
+            className="mt-xs"
           >
             {word.phonetic}
-          </Text>
+          </Typography>
         </View>
       )}
     </View>

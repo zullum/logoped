@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, Image } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -12,7 +12,8 @@ import Animated, {
 const { width, height } = Dimensions.get('window');
 
 interface FloatingReactionProps {
-  emoji: string;
+  emoji?: string;
+  imageUrl?: string | number; // Can be a URL string or local require() number
   onComplete?: () => void;
   startX?: number;
 }
@@ -23,6 +24,7 @@ interface FloatingReactionProps {
  */
 export const FloatingReaction: React.FC<FloatingReactionProps> = ({
   emoji,
+  imageUrl,
   onComplete,
   startX = Math.random() * (width - 60) + 30,
 }) => {
@@ -92,14 +94,28 @@ export const FloatingReaction: React.FC<FloatingReactionProps> = ({
     opacity: opacity.value,
   }));
 
-  return (
-    <Animated.Text
-      style={[styles.emoji, animatedStyle, { left: startX }]}
-      pointerEvents="none"
-    >
-      {emoji}
-    </Animated.Text>
-  );
+  // Determine if we're rendering an image or emoji
+  const renderContent = () => {
+    if (imageUrl) {
+      const imageSource = typeof imageUrl === 'number' ? imageUrl : { uri: imageUrl };
+      return (
+        <Animated.View style={[styles.imageContainer, animatedStyle, { left: startX }]} pointerEvents="none">
+          <Image source={imageSource} style={styles.image} resizeMode="cover" />
+        </Animated.View>
+      );
+    }
+
+    return (
+      <Animated.Text
+        style={[styles.emoji, animatedStyle, { left: startX }]}
+        pointerEvents="none"
+      >
+        {emoji}
+      </Animated.Text>
+    );
+  };
+
+  return renderContent();
 };
 
 const styles = StyleSheet.create({
@@ -111,5 +127,23 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
     zIndex: 9999, // Ensure it's on top
+  },
+  imageContainer: {
+    position: 'absolute',
+    bottom: 20, // Start from bottom of screen
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: 'rgba(0, 0, 0, 0.3)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    shadowOpacity: 1,
+    elevation: 4,
+    zIndex: 9999,
+  },
+  image: {
+    width: '100%',
+    height: '100%',
   },
 });

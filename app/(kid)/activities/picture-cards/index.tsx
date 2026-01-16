@@ -1,191 +1,237 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, ActivityIndicator, Pressable } from 'react-native';
+import { View, ActivityIndicator, ImageBackground, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useRewards } from '@/hooks/useRewards';
-import { useWordsByCategory } from '@/features/words/hooks/useWords';
-import { useWordProgress } from '@/features/words/hooks/useWordProgress';
-import { Button } from '@/components/ui';
-import { WordCard, CategorySelector, ProgressIndicator } from '@/components/kid/picture-cards';
+import { WordCard, ImageSlider, CategorySlider } from '@/components/kid/picture-cards';
 import { SubtleRewardDisplay, CelebrationModal } from '@/components/kid';
 import { REWARD_AMOUNTS } from '@/constants/rewards';
 import type { WordCategory, Word } from '@/types';
-import * as GestureHandler from 'react-native-gesture-handler';
+import { ASSETS, CATEGORY_LIST } from './assets';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
+  withSpring,
   runOnJS,
+  interpolate,
+  Extrapolation,
 } from 'react-native-reanimated';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25;
 
 export default function PictureCardsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const params = useLocalSearchParams<{ category?: string }>();
 
   // --- State ---
-  const [selectedCategory, setSelectedCategory] = useState<WordCategory>('animals');
+  const [selectedCategory, setSelectedCategory] = useState<string>(params.category || 'animals');
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [practiceCount, setPracticeCount] = useState(0);
-  const [isCompleted, setIsCompleted] = useState(false);
   const [sessionStarsEarned, setSessionStarsEarned] = useState(0);
-  const { awardStars, awardStarsSilent, celebration, clearCelebration, updateStreak } = useRewards();
+  const { awardStarsSilent, celebration, clearCelebration, updateStreak } = useRewards();
   const [showSubtleReward, setShowSubtleReward] = useState(false);
   const [subtleRewardStars, setSubtleRewardStars] = useState(0);
+  const [subtleRewardImage, setSubtleRewardImage] = useState<string | number | undefined>(undefined);
 
-  // --- Animation & Gesture ---
+  // --- Animation ---
   const translateX = useSharedValue(0);
-  const opacity = useSharedValue(1);
+  const cardOpacity = useSharedValue(1);
+  const scale = useSharedValue(1);
 
   // --- Data & Logic ---
-  const categoryOrder: WordCategory[] = ['animals', 'food', 'family', 'toys', 'colors', 'body'];
-  const { data: words, isLoading } = useWordsByCategory(selectedCategory);
-  const { recordAttempt } = useWordProgress();
-  const currentWord = words?.[currentWordIndex];
-  const totalWords = words?.length || 0;
+  const currentCategoryAssets = ASSETS[selectedCategory];
+  const currentAssetItem = currentCategoryAssets?.items[currentWordIndex];
 
-  const getNextCategory = (): WordCategory | null => {
-    const currentIndex = categoryOrder.indexOf(selectedCategory);
-    return currentIndex < categoryOrder.length - 1 ? categoryOrder[currentIndex + 1] : null;
+  // Helper to map asset to Word type
+  const mapAssetToWord = (item: { id: string; image: any }, category: string): Word => {
+    const text = item.id.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    return {
+      id: item.id,
+      text: text,
+      translations: { en: text, es: text }, // Placeholder translations
+      phonetic: '',
+      syllableCount: 1,
+      category: category as WordCategory,
+      difficulty: 1,
+      imageUrl: item.image,
+      audioUrl: { en: '', es: '' }, // No audio for now
+    };
   };
 
-  const changeWord = (newIndex: number) => {
-    'worklet';
-    opacity.value = withTiming(0, { duration: 150 }, (isFinished) => {
-      if (isFinished) {
-        runOnJS(setCurrentWordIndex)(newIndex);
-        opacity.value = withTiming(1, { duration: 150 });
+  const currentWord = currentAssetItem ? mapAssetToWord(currentAssetItem, selectedCategory) : null;
+
+  const getNextCategory = (): string | null => {
+    const currentIndex = CATEGORY_LIST.indexOf(selectedCategory);
+    return currentIndex < CATEGORY_LIST.length - 1 ? CATEGORY_LIST[currentIndex + 1] : null;
+  };
+
+  // Reset animations when index changes
+  useEffect(() => {
+    translateX.value = 0;
+    cardOpacity.value = 0;
+    scale.value = 0.8;
+    
+    cardOpacity.value = withTiming(1, { duration: 200 });
+    scale.value = withSpring(1);
+  }, [currentWordIndex, selectedCategory]);
+
+  const goToNextWord = () => {
+    if (currentWordIndex < currentCategoryAssets.items.length - 1) {
+      setCurrentWordIndex(prev => prev + 1);
+    } else {
+      handleNextCategory();
+    }
+  };
+
+  const goToPrevWord = () => {
+    if (currentWordIndex > 0) {
+      setCurrentWordIndex(prev => prev - 1);
+    } else {
+      translateX.value = withSpring(0);
+    }
+  };
+
+  const panGesture = Gesture.Pan()
+    .onUpdate((event) => {
+      translateX.value = event.translationX;
+    })
+    .onEnd((event) => {
+      if (event.translationX < -SWIPE_THRESHOLD) {
+        // Swipe Left -> Next
+        translateX.value = withTiming(-SCREEN_WIDTH, { duration: 200 }, () => {
+          runOnJS(goToNextWord)();
+        });
+      } else if (event.translationX > SWIPE_THRESHOLD) {
+        // Swipe Right -> Prev
+        if (currentWordIndex > 0) {
+          translateX.value = withTiming(SCREEN_WIDTH, { duration: 200 }, () => {
+            runOnJS(goToPrevWord)();
+          });
+        } else {
+          translateX.value = withSpring(0);
+        }
+      } else {
+        translateX.value = withSpring(0);
       }
     });
-  };
 
-  const handleNextWord = () => {
-    'worklet';
-    if (currentWordIndex < totalWords - 1) {
-      changeWord(currentWordIndex + 1);
-    } else {
-      runOnJS(setIsCompleted)(true);
-    }
-  };
-
-  const handlePreviousWord = () => {
-    'worklet';
-    if (currentWordIndex > 0) {
-      changeWord(currentWordIndex - 1);
-    }
-  };
-
-  const flingLeft = GestureHandler.Gesture.Fling()
-    .direction(GestureHandler.Directions.LEFT)
-    .onEnd(handleNextWord);
-
-  const flingRight = GestureHandler.Gesture.Fling()
-    .direction(GestureHandler.Directions.RIGHT)
-    .onEnd(handlePreviousWord);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: translateX.value }],
-    opacity: opacity.value,
+  const animatedCardStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: translateX.value },
+      { rotateZ: `${interpolate(translateX.value, [-SCREEN_WIDTH, 0, SCREEN_WIDTH], [-15, 0, 15], Extrapolation.CLAMP)}deg` },
+      { scale: scale.value }
+    ],
+    opacity: cardOpacity.value,
   }));
 
   const handleWordTap = async (word: Word) => {
-    await recordAttempt(word.id, true);
+    // await recordAttempt(word.id, true); // Disabled for now as we don't have real word IDs in DB
     awardStarsSilent(REWARD_AMOUNTS.WORD_LEARNED, `Practiced word: ${word.text}`, 'picture-cards');
     setSessionStarsEarned(prev => prev + REWARD_AMOUNTS.WORD_LEARNED);
     setSubtleRewardStars(REWARD_AMOUNTS.WORD_LEARNED);
+    setSubtleRewardImage(word.imageUrl);
     setShowSubtleReward(true);
     setTimeout(() => setShowSubtleReward(false), 2500);
-    setPracticeCount(prev => prev + 1);
   };
 
-  const handleRetry = () => {
-    setIsCompleted(false);
-    setCurrentWordIndex(0);
-    setPracticeCount(0);
-    setSessionStarsEarned(0);
+  const handleSliderSelect = (index: number) => {
+    if (index !== currentWordIndex) {
+      setCurrentWordIndex(index);
+    }
   };
 
   const handleNextCategory = () => {
     const nextCat = getNextCategory();
     if (nextCat) {
       setSelectedCategory(nextCat);
+      setCurrentWordIndex(0); // Reset to first word
     } else {
-      router.back();
+      // End of all categories
     }
   };
-  
+
   const handleCategoryChange = (category: WordCategory) => {
     setSelectedCategory(category);
     setCurrentWordIndex(0);
-    setPracticeCount(0);
-    setIsCompleted(false);
   };
 
   useEffect(() => {
     updateStreak();
   }, [updateStreak]);
 
-  useEffect(() => {
-    setCurrentWordIndex(0);
-    setPracticeCount(0);
-    setIsCompleted(false);
-    setSessionStarsEarned(0);
-  }, [selectedCategory]);
-
-  if (isLoading) {
-    return <SafeAreaView className="flex-1 bg-background-light items-center justify-center"><ActivityIndicator size="large" color="#4A90E2" /></SafeAreaView>;
+  if (!currentCategoryAssets) {
+    return (
+      <View className="flex-1 items-center justify-center bg-primary-50">
+        <ActivityIndicator size="large" color="#4A90E2" />
+      </View>
+    );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-background-light" edges={['top', 'left', 'right']}>
-      <View className="px-lg pt-md pb-sm">
-        <View className="flex-row items-center justify-between mb-md">
-          <Button variant="ghost" onPress={() => router.back()} className="px-0">{`← ${t('common.back')}`}</Button>
-          <Text className="text-2xl text-text-dark" style={{ fontFamily: 'Quicksand_700Bold' }}>{t('kid.activities.pictureCards')}</Text>
-          <View className="w-16" />
+    <ImageBackground 
+      source={require('@assets/images/farm_background.jpg')} 
+      style={{ flex: 1 }}
+      resizeMode="cover"
+    >
+      <SafeAreaView className="flex-1" edges={['top', 'left', 'right']}>
+        {/* Header */}
+        <View className="px-4 pt-2 pb-2 flex-row items-start">
+          <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7} className="mt-2">
+            <Image 
+              source={require('@assets/images/buttons/back_button.webp')} 
+              style={{ width: 80, height: 80 }} 
+              resizeMode="contain" 
+            />
+          </TouchableOpacity>
+          <View className="flex-1 ml-2">
+             <CategorySlider selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
+          </View>
         </View>
-        <CategorySelector selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
-        <ProgressIndicator current={currentWordIndex + 1} total={totalWords} practiceCount={practiceCount} />
-      </View>
 
-      <ScrollView className="flex-1" contentContainerClassName="px-lg pb-lg">
-        {isCompleted ? (
-          <View className="flex-1 items-center justify-center py-xl">
-            <Text className="text-4xl mb-md" style={{ fontFamily: 'Quicksand_700Bold' }}>🎉 {t('kid.pictureCards.allDone')}</Text>
-            <Text className="text-xl text-text-medium text-center mb-xl" style={{ fontFamily: 'Nunito_600SemiBold' }}>{t('kid.pictureCards.completedCategory')}</Text>
-            <View className="flex-row gap-sm w-full items-center">
-              <Pressable onPress={handleRetry} className="items-center justify-center active:opacity-70" accessibilityRole="button" accessibilityLabel={t('kid.pictureCards.retry')} style={{ width: 70, height: 70 }}>
-                <Text className="text-5xl" style={{ lineHeight: 56 }}>🔄</Text>
-              </Pressable>
-              <View className="flex-1">
-                <Button onPress={handleNextCategory} variant="primary" size="large">
-                  {getNextCategory() ? `${t('kid.pictureCards.nextCategory')} →` : t('kid.pictureCards.goHome')}
-                </Button>
-              </View>
-            </View>
-          </View>
-        ) : currentWord ? (
-          <View className="flex-1 items-center justify-center py-xl">
-            <GestureHandler.GestureDetector gesture={GestureHandler.Gesture.Race(flingLeft, flingRight)}>
-              <Animated.View style={animatedStyle}>
-                <WordCard word={currentWord} onTap={handleWordTap} size="large" />
+        {/* Main Content */}
+        <View className="flex-1 items-center justify-center px-4">
+          {currentWord ? (
+            <GestureDetector gesture={panGesture}>
+              <Animated.View style={animatedCardStyle}>
+                <WordCard 
+                  word={currentWord} 
+                  onTap={handleWordTap} 
+                  size="large" 
+                  showText={false} 
+                />
               </Animated.View>
-            </GestureHandler.GestureDetector>
-            <View className="mt-xl w-full">
-              <Button onPress={handleNextWord} variant="primary" size="large">
-                {currentWordIndex === totalWords - 1 ? t('kid.pictureCards.finish') : t('kid.pictureCards.next')}
-              </Button>
+            </GestureDetector>
+          ) : (
+            <View className="flex-1 items-center justify-center">
+              <ActivityIndicator size="small" color="#4A90E2" />
             </View>
-          </View>
-        ) : (
-          <View className="flex-1 items-center justify-center">
-            <Text className="text-lg text-text-medium" style={{ fontFamily: 'Nunito_400Regular' }}>{t('kid.pictureCards.noWords')}</Text>
-          </View>
-        )}
-      </ScrollView>
+          )}
+        </View>
 
-      {showSubtleReward && <SubtleRewardDisplay key={`reward-${Date.now()}`} starsEarned={subtleRewardStars} onComplete={() => setShowSubtleReward(false)} />}
-      <CelebrationModal visible={!!celebration} celebration={celebration} onClose={clearCelebration} />
-    </SafeAreaView>
+        {/* Bottom Slider */}
+        <View className="pb-8">
+          <ImageSlider 
+            items={currentCategoryAssets.items} 
+            currentIndex={currentWordIndex} 
+            onSelectWord={handleSliderSelect}
+            onNextCategory={getNextCategory() ? handleNextCategory : undefined}
+          />
+        </View>
+
+        {showSubtleReward && (
+          <SubtleRewardDisplay
+            key={`reward-${Date.now()}`}
+            starsEarned={subtleRewardStars}
+            imageUrl={subtleRewardImage}
+            onComplete={() => setShowSubtleReward(false)}
+          />
+        )}
+        <CelebrationModal visible={!!celebration} celebration={celebration} onClose={clearCelebration} />
+      </SafeAreaView>
+    </ImageBackground>
   );
 }

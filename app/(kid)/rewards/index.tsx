@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   SafeAreaView,
   Pressable,
@@ -9,6 +8,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Icon } from '@/components/ui/Icon';
+import { Typography } from '@/components/ui';
 import { StickerCard } from '@/components/kid/StickerCard';
 import { StarDisplay } from '@/components/kid/StarDisplay';
 import { useRewards } from '@/hooks/useRewards';
@@ -80,34 +80,27 @@ export default function RewardsScreen() {
 
       {/* Details */}
       <View className="flex-1 ml-4">
-        <Text
-          className={`text-lg font-quicksand-bold ${
-            item.isUnlocked ? 'text-text-dark' : 'text-gray-400'
-          }`}
-          style={{ fontFamily: 'Quicksand_700Bold' }}
+        <Typography
+          variant="body-lg"
+          className={item.isUnlocked ? 'text-text-dark' : 'text-gray-400'}
         >
           {item.title}
-        </Text>
-        <Text
-          className={`text-sm font-nunito-regular ${
-            item.isUnlocked ? 'text-text-medium' : 'text-gray-400'
-          }`}
-          style={{ fontFamily: 'Nunito_400Regular' }}
+        </Typography>
+        <Typography
+          variant="body-sm"
+          className={item.isUnlocked ? 'text-text-medium' : 'text-gray-400'}
         >
           {item.isUnlocked ? item.description : 'Locked'}
-        </Text>
+        </Typography>
       </View>
 
       {/* Stars */}
       {item.isUnlocked && (
         <View className="flex-row items-center bg-sunshine-50 px-3 py-2 rounded-full">
           <Icon name="star" size={16} color="#FFD166" />
-          <Text
-            className="text-sm font-quicksand-bold text-sunshine-600 ml-1"
-            style={{ fontFamily: 'Quicksand_700Bold' }}
-          >
+          <Typography variant="body-sm" className="text-sunshine-600 ml-1">
             {item.rewardStars}
-          </Text>
+          </Typography>
         </View>
       )}
     </Pressable>
@@ -124,12 +117,9 @@ export default function RewardsScreen() {
           <Icon name="arrow-back" size={24} color="#2D3748" />
         </Pressable>
 
-        <Text
-          className="text-2xl font-quicksand-bold text-text-dark"
-          style={{ fontFamily: 'Quicksand_700Bold' }}
-        >
+        <Typography variant="h4" color="dark">
           {t('kid.rewards.title')}
-        </Text>
+        </Typography>
 
         <StarDisplay count={totalStars} />
       </View>
@@ -139,55 +129,37 @@ export default function RewardsScreen() {
         <View className="items-center">
           <View className="flex-row items-center mb-1">
             <Icon name="images" size={20} color="#4A90E2" />
-            <Text
-              className="text-2xl font-quicksand-bold text-primary-500 ml-2"
-              style={{ fontFamily: 'Quicksand_700Bold' }}
-            >
+            <Typography variant="h4" className="text-primary-500 ml-2">
               {unlockedStickers}/{stickers.length}
-            </Text>
+            </Typography>
           </View>
-          <Text
-            className="text-sm font-nunito-regular text-text-light"
-            style={{ fontFamily: 'Nunito_400Regular' }}
-          >
+          <Typography variant="body-sm" color="light">
             {t('kid.rewards.stickersStat')}
-          </Text>
+          </Typography>
         </View>
 
         <View className="items-center">
           <View className="flex-row items-center mb-1">
             <Icon name="trophy" size={20} color="#EF476F" />
-            <Text
-              className="text-2xl font-quicksand-bold text-coral-500 ml-2"
-              style={{ fontFamily: 'Quicksand_700Bold' }}
-            >
+            <Typography variant="h4" className="text-coral-500 ml-2">
               {unlockedAchievements}/{achievements.length}
-            </Text>
+            </Typography>
           </View>
-          <Text
-            className="text-sm font-nunito-regular text-text-light"
-            style={{ fontFamily: 'Nunito_400Regular' }}
-          >
+          <Typography variant="body-sm" color="light">
             {t('kid.rewards.achievementsStat')}
-          </Text>
+          </Typography>
         </View>
 
         <View className="items-center">
           <View className="flex-row items-center mb-1">
             <Icon name="flame" size={20} color="#FFD166" />
-            <Text
-              className="text-2xl font-quicksand-bold text-sunshine-600 ml-2"
-              style={{ fontFamily: 'Quicksand_700Bold' }}
-            >
+            <Typography variant="h4" className="text-sunshine-600 ml-2">
               {currentStreak}
-            </Text>
+            </Typography>
           </View>
-          <Text
-            className="text-sm font-nunito-regular text-text-light"
-            style={{ fontFamily: 'Nunito_400Regular' }}
-          >
+          <Typography variant="body-sm" color="light">
             {t('kid.rewards.streakStat')}
-          </Text>
+          </Typography>
         </View>
       </View>
 
@@ -199,14 +171,13 @@ export default function RewardsScreen() {
             activeTab === 'stickers' ? 'bg-primary-500' : 'bg-gray-100'
           }`}
         >
-          <Text
-            className={`text-lg font-quicksand-semibold ${
-              activeTab === 'stickers' ? 'text-white' : 'text-gray-600'
-            }`}
-            style={{ fontFamily: 'Quicksand_600SemiBold' }}
+          <Typography
+            variant="body-lg"
+            color={activeTab === 'stickers' ? 'white' : undefined}
+            className={activeTab === 'stickers' ? '' : 'text-gray-600'}
           >
             {t('kid.rewards.stickersTab')}
-          </Text>
+          </Typography>
         </Pressable>
 
         <Pressable
@@ -215,14 +186,13 @@ export default function RewardsScreen() {
             activeTab === 'achievements' ? 'bg-primary-500' : 'bg-gray-100'
           }`}
         >
-          <Text
-            className={`text-lg font-quicksand-semibold ${
-              activeTab === 'achievements' ? 'text-white' : 'text-gray-600'
-            }`}
-            style={{ fontFamily: 'Quicksand_600SemiBold' }}
+          <Typography
+            variant="body-lg"
+            color={activeTab === 'achievements' ? 'white' : undefined}
+            className={activeTab === 'achievements' ? '' : 'text-gray-600'}
           >
             {t('kid.rewards.achievementsTab')}
-          </Text>
+          </Typography>
         </Pressable>
       </View>
 

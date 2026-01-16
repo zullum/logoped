@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import {
   View,
-  Text,
   Modal,
   Pressable,
   StyleSheet,
@@ -18,9 +17,11 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 import { Icon } from '@/components/ui/Icon';
+import { Typography } from '@/components/ui';
 import type { CelebrationData } from '@/types/reward.types';
 import { useSoundEffect } from '@/hooks/useAudio';
 import { ANIMATION_DURATIONS } from '@/constants/rewards';
+import { COLORS, ICON_SIZES } from '@/constants/theme';
 
 interface CelebrationModalProps {
   visible: boolean;
@@ -55,9 +56,11 @@ const FloatingEmoji: React.FC<{ emoji: string; delay: number }> = ({ emoji, dela
   }));
 
   return (
-    <Animated.Text style={[{ fontSize: 28 }, animatedStyle]}>
-      {emoji}
-    </Animated.Text>
+    <Animated.View style={animatedStyle}>
+      <Typography style={{ fontSize: 28 }}>
+        {emoji}
+      </Typography>
+    </Animated.View>
   );
 };
 
@@ -159,7 +162,7 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
             {celebration.type === 'sticker' && celebration.sticker && (
               <View className="w-28 h-28 bg-primary-100 rounded-2xl items-center justify-center">
                 {/* Placeholder for sticker image */}
-                <Icon name="image" size={64} color="#4A90E2" />
+                <Icon name="image" size={ICON_SIZES.huge} color={COLORS.primary} />
               </View>
             )}
 
@@ -175,61 +178,43 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
           </View>
 
           {/* Title - Slightly smaller */}
-          <Text
-            className="text-3xl font-quicksand-bold text-text-dark text-center mb-3"
-            style={{ fontFamily: 'Quicksand_700Bold' }}
-          >
+          <Typography variant="h3" color="dark" center className="mb-3">
             {celebration.title}
-          </Text>
+          </Typography>
 
           {/* Message */}
-          <Text
-            className="text-xl font-nunito-regular text-text-medium text-center mb-6"
-            style={{ fontFamily: 'Nunito_400Regular' }}
-          >
+          <Typography variant="button" color="medium" center className="mb-6">
             {celebration.message}
-          </Text>
+          </Typography>
 
           {/* Stars Earned */}
           {celebration.starsEarned && celebration.starsEarned > 0 && (
             <View className="flex-row items-center bg-sunshine-50 px-6 py-3 rounded-full mb-6">
-              <Icon name="star" size={28} color="#FFD166" />
-              <Text
-                className="text-2xl font-quicksand-bold text-sunshine-600 ml-2"
-                style={{ fontFamily: 'Quicksand_700Bold' }}
-              >
+              <Icon name="star" size={ICON_SIZES.large} color={COLORS.sunshine} />
+              <Typography variant="h4" className="text-sunshine-600 ml-2">
                 +{celebration.starsEarned}
-              </Text>
+              </Typography>
             </View>
           )}
 
           {/* Sticker Details */}
           {celebration.sticker && (
             <View className="bg-lavender-50 px-6 py-4 rounded-2xl mb-6 w-full">
-              <Text
-                className="text-lg font-nunito-semibold text-center text-lavender-600 mb-1"
-                style={{ fontFamily: 'Nunito_600SemiBold' }}
-              >
+              <Typography variant="body-lg" center className="text-lavender-600 mb-1">
                 {celebration.sticker.name}
-              </Text>
-              <Text
-                className="text-base font-nunito-regular text-center text-lavender-500"
-                style={{ fontFamily: 'Nunito_400Regular' }}
-              >
+              </Typography>
+              <Typography variant="body" center className="text-lavender-500">
                 {celebration.sticker.description}
-              </Text>
+              </Typography>
             </View>
           )}
 
           {/* Achievement Details */}
           {celebration.achievement && (
             <View className="bg-coral-50 px-6 py-4 rounded-2xl mb-6 w-full">
-              <Text
-                className="text-base font-nunito-regular text-center text-coral-600"
-                style={{ fontFamily: 'Nunito_400Regular' }}
-              >
+              <Typography variant="body" center className="text-coral-600">
                 {celebration.achievement.description}
-              </Text>
+              </Typography>
             </View>
           )}
 
@@ -238,21 +223,15 @@ export const CelebrationModal: React.FC<CelebrationModalProps> = ({
             onPress={handleClose}
             className="bg-grass-500 px-8 py-4 rounded-2xl active:bg-grass-600 min-h-[60px] items-center justify-center"
           >
-            <Text
-              className="text-xl font-quicksand-bold text-white"
-              style={{ fontFamily: 'Quicksand_700Bold' }}
-            >
+            <Typography variant="button" color="white">
               Awesome!
-            </Text>
+            </Typography>
           </Pressable>
 
           {/* Tap anywhere hint */}
-          <Text
-            className="text-sm font-nunito-regular text-text-light mt-4 opacity-70"
-            style={{ fontFamily: 'Nunito_400Regular' }}
-          >
+          <Typography variant="body-sm" color="light" className="mt-4 opacity-70">
             Tap anywhere to continue
-          </Text>
+          </Typography>
         </Animated.View>
       </View>
     </Modal>

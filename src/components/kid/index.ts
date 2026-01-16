@@ -1,5 +1,7 @@
 // Kid-specific component exports
+export { BackButton } from './BackButton';
 export { CharacterAvatar } from './CharacterAvatar';
+export { KidHeader } from './KidHeader';
 export { StarDisplay } from './StarDisplay';
 export { CelebrationModal } from './CelebrationModal';
 export { StarAnimation } from './StarAnimation';

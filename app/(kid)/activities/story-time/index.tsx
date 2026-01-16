@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, Text, FlatList, Pressable, Modal } from 'react-native';
+import { View, FlatList, Pressable, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Animated, {
@@ -7,11 +7,14 @@ import Animated, {
   useSharedValue,
   withTiming,
   Easing,
+  runOnJS,
 } from 'react-native-reanimated';
+import { Typography } from '@/components/ui';
 import { StoryPageView, PageNavigation } from '@/components/kid/story-time';
 import { Card } from '@/components/ui/Card';
 import { Icon } from '@/components/ui/Icon';
 import { CelebrationModal } from '@/components/kid/CelebrationModal';
+import { BackButton } from '@/components/kid/BackButton';
 import { useRewards } from '@/hooks/useRewards';
 import { useSoundEffect } from '@/hooks/useAudio';
 import { getAllStories } from '@/data/stories';
@@ -53,28 +56,38 @@ export default function StoryTimeScreen() {
   /**
    * Navigate to previous page
    */
+  const goToPreviousPage = useCallback(() => {
+    setCurrentPageIndex((prev) => prev - 1);
+  }, []);
+
   const handlePreviousPage = useCallback(() => {
     if (currentPageIndex > 0) {
       // Animate page transition
       pageOpacity.value = withTiming(0, { duration: 200 });
       pageTranslateX.value = withTiming(-50, { duration: 200 }, () => {
-        setCurrentPageIndex((prev) => prev - 1);
+        'worklet';
+        runOnJS(goToPreviousPage)();
         pageTranslateX.value = 50;
         pageOpacity.value = withTiming(1, { duration: 200 });
         pageTranslateX.value = withTiming(0, { duration: 200 });
       });
     }
-  }, [currentPageIndex]);
+  }, [currentPageIndex, goToPreviousPage, pageOpacity, pageTranslateX]);
 
   /**
    * Navigate to next page
    */
+  const goToNextPage = useCallback(() => {
+    setCurrentPageIndex((prev) => prev + 1);
+  }, []);
+
   const handleNextPage = useCallback(() => {
     if (selectedStory && currentPageIndex < selectedStory.pages.length - 1) {
       // Animate page transition
       pageOpacity.value = withTiming(0, { duration: 200 });
       pageTranslateX.value = withTiming(50, { duration: 200 }, () => {
-        setCurrentPageIndex((prev) => prev + 1);
+        'worklet';
+        runOnJS(goToNextPage)();
         pageTranslateX.value = -50;
         pageOpacity.value = withTiming(1, { duration: 200 });
         pageTranslateX.value = withTiming(0, { duration: 200 });
@@ -86,7 +99,7 @@ export default function StoryTimeScreen() {
         handleCloseStory();
       }, 2000);
     }
-  }, [currentPageIndex, selectedStory, awardStars, handleCloseStory]);
+  }, [currentPageIndex, selectedStory, awardStars, handleCloseStory, goToNextPage, pageOpacity, pageTranslateX]);
 
   /**
    * Handle word tap
@@ -145,21 +158,11 @@ export default function StoryTimeScreen() {
       <SafeAreaView className="flex-1 bg-background-light" edges={['top']}>
         {/* Header */}
         <View className="flex-row items-center justify-between px-6 py-4">
-          <Pressable
-            onPress={() => router.back()}
-            className="w-12 h-12 items-center justify-center bg-white rounded-full shadow-sm"
-            accessibilityLabel="Go back"
-            accessibilityRole="button"
-          >
-            <Icon name="arrow-back" size={24} color="#4A90E2" />
-          </Pressable>
+          <BackButton onPress={() => router.back()} variant="back" size="medium" />
 
-          <Text
-            className="text-2xl text-text-dark"
-            style={{ fontFamily: 'Quicksand_700Bold' }}
-          >
+          <Typography variant="h4" color="dark">
             📚 Story Time
-          </Text>
+          </Typography>
 
           <View className="w-12" />
         </View>
@@ -184,27 +187,18 @@ export default function StoryTimeScreen() {
 
                   {/* Story info */}
                   <View className="flex-1">
-                    <Text
-                      className="text-lg text-text-dark mb-1"
-                      style={{ fontFamily: 'Quicksand_600SemiBold' }}
-                    >
+                    <Typography variant="body-lg" color="dark" className="mb-1">
                       {item.title}
-                    </Text>
-                    <Text
-                      className="text-sm text-text-medium mb-2"
-                      style={{ fontFamily: 'Nunito_400Regular' }}
-                    >
+                    </Typography>
+                    <Typography variant="body-sm" color="medium" className="mb-2">
                       {item.pages.length} pages • Ages {item.ageRange}
-                    </Text>
+                    </Typography>
                     <View className="flex-row">
                       {item.tags.slice(0, 2).map((tag) => (
                         <View key={tag} className="bg-primary-100 px-2 py-1 rounded mr-2">
-                          <Text
-                            className="text-xs text-primary-600"
-                            style={{ fontFamily: 'Nunito_600SemiBold' }}
-                          >
+                          <Typography variant="caption" className="text-primary-600">
                             {tag}
-                          </Text>
+                          </Typography>
                         </View>
                       ))}
                     </View>
@@ -228,24 +222,19 @@ export default function StoryTimeScreen() {
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       {/* Header */}
       <View className="flex-row items-center justify-between px-6 py-4 bg-background-light border-b border-gray-200">
-        <Pressable
-          onPress={handleCloseStory}
-          className="w-10 h-10 items-center justify-center bg-white rounded-full shadow-sm"
-          accessibilityLabel="Close story"
-          accessibilityRole="button"
-        >
-          <Icon name="close" size={24} color="#6B7280" />
-        </Pressable>
+        <BackButton onPress={handleCloseStory} variant="back" size="medium" />
 
-        <Text
-          className="text-lg text-text-dark flex-1 text-center mx-4"
-          style={{ fontFamily: 'Quicksand_600SemiBold' }}
+        <Typography
+          variant="body-lg"
+          color="dark"
+          center
+          className="flex-1 mx-4"
           numberOfLines={1}
         >
           {selectedStory.title}
-        </Text>
+        </Typography>
 
-        <View className="w-10" />
+        <View className="w-16" />
       </View>
 
       {/* Story page */}

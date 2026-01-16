@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Animated } from 'react-native';
+import { View, Animated } from 'react-native';
+import { Typography } from '@/components/ui';
 import { useTranslation } from '@/hooks/useTranslation';
 
 export function RewardAnimation() {
@@ -42,31 +43,25 @@ export function RewardAnimation() {
       >
         {/* Celebration Stars */}
         <View className="flex-row gap-sm mb-md">
-          <Text className="text-6xl">⭐</Text>
-          <Text className="text-6xl">🎉</Text>
-          <Text className="text-6xl">⭐</Text>
+          <Typography className="text-6xl">⭐</Typography>
+          <Typography className="text-6xl">🎉</Typography>
+          <Typography className="text-6xl">⭐</Typography>
         </View>
 
         {/* Reward Message */}
-        <Text
-          className="text-3xl text-primary-500 text-center mb-sm"
-          style={{ fontFamily: 'Quicksand_700Bold' }}
-        >
+        <Typography variant="h3" color="primary" center className="mb-sm">
           {t('kid.rewards.greatJob')}
-        </Text>
+        </Typography>
 
-        <Text
-          className="text-xl text-text-medium text-center"
-          style={{ fontFamily: 'Nunito_600SemiBold' }}
-        >
+        <Typography variant="button" color="medium" center>
           {t('kid.rewards.keepGoing')}
-        </Text>
+        </Typography>
 
         {/* Fun Characters */}
         <View className="flex-row gap-md mt-md">
-          <Text className="text-5xl">🎈</Text>
-          <Text className="text-5xl">🌟</Text>
-          <Text className="text-5xl">🎈</Text>
+          <Typography className="text-5xl">🎈</Typography>
+          <Typography className="text-5xl">🌟</Typography>
+          <Typography className="text-5xl">🎈</Typography>
         </View>
       </Animated.View>
     </View>

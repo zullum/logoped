@@ -41,11 +41,24 @@
     },
     "categories": {
       "animals": "Animales",
-      "food": "Comida",
-      "family": "Familia",
-      "toys": "Juguetes",
+      "body_parts": "Partes del Cuerpo",
+      "clothes": "Ropa",
       "colors": "Colores",
-      "body": "Cuerpo"
+      "electronics": "Electrónicos",
+      "fantasy_creatures": "Criaturas Fantásticas",
+      "food": "Comida",
+      "furniture": "Muebles",
+      "household_items": "Artículos del Hogar",
+      "musical_instruments": "Instrumentos Musicales",
+      "nature": "Naturaleza",
+      "plants": "Plantas",
+      "professions": "Profesiones",
+      "school_supplies": "Útiles Escolares",
+      "shapes": "Formas",
+      "sports_equipment": "Equipo Deportivo",
+      "toys": "Juguetes",
+      "vehicles": "Vehículos",
+      "weather": "Clima"
     },
     "rewards": {
       "title": "Mi Colección",

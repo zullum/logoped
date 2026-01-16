@@ -2947,7 +2947,7 @@ Daily Challenge Selection:
 **Priority:** High | **Effort:** 12 hours | **Dependencies:** 1.4, 2.5
 
 #### Description
-Expand language support to include French, German, and Polish with full translations and audio content.
+Expand language support to include French, German, and Bosnian with full translations and audio content.
 
 #### Tasks Per Language
 1. **Translation**

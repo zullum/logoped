@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { View, Text, FlatList, Pressable } from 'react-native';
+import { View, FlatList, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { Typography } from '@/components/ui';
 import { MemoryCard } from '@/components/kid/memory-game';
 import type { CardData } from '@/components/kid/memory-game';
 import { Icon } from '@/components/ui/Icon';
 import { StarDisplay } from '@/components/kid/StarDisplay';
 import { CelebrationModal } from '@/components/kid/CelebrationModal';
+import { BackButton } from '@/components/kid/BackButton';
 import { useWords } from '@/features/words';
 import { useRewards } from '@/hooks/useRewards';
 import { useSoundEffect } from '@/hooks/useAudio';
@@ -29,7 +31,7 @@ const DIFFICULTIES: Record<GameDifficulty, DifficultyConfig> = {
 
 export default function MemoryMatchingGame() {
   const router = useRouter();
-  const { words, isLoading } = useWords();
+  const { data: words, isLoading } = useWords();
   const { celebration, clearCelebration, awardStars } = useRewards();
   const flipSound = useSoundEffect('tap');
   const matchSound = useSoundEffect('success');
@@ -78,7 +80,7 @@ export default function MemoryMatchingGame() {
    * Start new game
    */
   const startGame = useCallback(() => {
-    if (words.length === 0) return;
+    if (!words || words.length === 0) return;
 
     const config = DIFFICULTIES[difficulty];
     const selectedWords = [...words]
@@ -172,33 +174,20 @@ export default function MemoryMatchingGame() {
       <SafeAreaView className="flex-1 bg-background-light" edges={['top']}>
         {/* Header */}
         <View className="flex-row items-center justify-between px-6 py-4">
-          <Pressable
-            onPress={() => router.back()}
-            className="w-12 h-12 items-center justify-center bg-white rounded-full shadow-sm"
-            accessibilityLabel="Go back"
-            accessibilityRole="button"
-          >
-            <Icon name="arrow-back" size={24} color="#4A90E2" />
-          </Pressable>
+          <BackButton onPress={() => router.back()} variant="back" size="medium" />
 
-          <Text
-            className="text-2xl text-text-dark"
-            style={{ fontFamily: 'Quicksand_700Bold' }}
-          >
+          <Typography variant="h4" color="dark">
             🧠 Memory Game
-          </Text>
+          </Typography>
 
           <View className="w-12" />
         </View>
 
         {/* Difficulty selection */}
         <View className="flex-1 justify-center px-6">
-          <Text
-            className="text-xl text-text-dark text-center mb-8"
-            style={{ fontFamily: 'Quicksand_600SemiBold' }}
-          >
+          <Typography variant="button" color="dark" center className="mb-8">
             Choose your difficulty:
-          </Text>
+          </Typography>
 
           {(Object.keys(DIFFICULTIES) as GameDifficulty[]).map((diff) => (
             <Pressable
@@ -212,18 +201,20 @@ export default function MemoryMatchingGame() {
                   ${difficulty === diff ? 'bg-primary-500 border-primary-500' : 'bg-white border-gray-300'}
                 `}
               >
-                <Text
-                  className={`text-lg text-center ${difficulty === diff ? 'text-white' : 'text-text-dark'}`}
-                  style={{ fontFamily: 'Quicksand_600SemiBold' }}
+                <Typography
+                  variant="body-lg"
+                  center
+                  color={difficulty === diff ? 'white' : 'dark'}
                 >
                   {DIFFICULTIES[diff].label}
-                </Text>
-                <Text
-                  className={`text-sm text-center mt-1 ${difficulty === diff ? 'text-white/80' : 'text-text-medium'}`}
-                  style={{ fontFamily: 'Nunito_400Regular' }}
+                </Typography>
+                <Typography
+                  variant="body-sm"
+                  center
+                  className={`mt-1 ${difficulty === diff ? 'text-white/80' : 'text-text-medium'}`}
                 >
                   {DIFFICULTIES[diff].columns} × {DIFFICULTIES[diff].rows} grid
-                </Text>
+                </Typography>
               </View>
             </Pressable>
           ))}
@@ -234,12 +225,9 @@ export default function MemoryMatchingGame() {
             className="mt-8 bg-grass-500 rounded-2xl p-6 shadow-lg"
             disabled={isLoading}
           >
-            <Text
-              className="text-xl text-white text-center"
-              style={{ fontFamily: 'Quicksand_700Bold' }}
-            >
+            <Typography variant="button" color="white" center>
               {isLoading ? 'Loading...' : 'Start Game'}
-            </Text>
+            </Typography>
           </Pressable>
         </View>
       </SafeAreaView>
@@ -255,6 +243,14 @@ export default function MemoryMatchingGame() {
       {/* Header */}
       <View className="px-6 py-4">
         <View className="flex-row items-center justify-between mb-3">
+          <BackButton onPress={() => router.back()} variant="back" size="medium" />
+
+          <View className="items-center">
+            <Typography variant="body-sm" color="medium">
+              Moves: {moves}
+            </Typography>
+          </View>
+
           <Pressable
             onPress={handleRestart}
             className="w-12 h-12 items-center justify-center bg-white rounded-full shadow-sm"
@@ -263,17 +259,6 @@ export default function MemoryMatchingGame() {
           >
             <Icon name="refresh" size={24} color="#4A90E2" />
           </Pressable>
-
-          <View className="items-center">
-            <Text
-              className="text-sm text-text-medium"
-              style={{ fontFamily: 'Nunito_600SemiBold' }}
-            >
-              Moves: {moves}
-            </Text>
-          </View>
-
-          <View className="w-12" />
         </View>
 
         {/* Progress bar */}

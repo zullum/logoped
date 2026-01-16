@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View } from 'react-native';
+import { Typography } from '@/components/ui';
 import { StarDisplay } from '@/components/kid/StarDisplay';
+import { BackButton } from '@/components/kid/BackButton';
 
 interface GameStatsProps {
   score: number;
@@ -22,36 +24,21 @@ export const GameStats: React.FC<GameStatsProps> = ({
   return (
     <View className="px-6 py-4 bg-background-light">
       <View className="flex-row items-center justify-between">
-        {/* Close button */}
-        {onClose && (
-          <Pressable
-            onPress={onClose}
-            className="w-12 h-12 items-center justify-center bg-white rounded-full shadow-sm"
-            accessibilityLabel="Close game"
-            accessibilityRole="button"
-          >
-            <Text className="text-2xl text-text-medium">✕</Text>
-          </Pressable>
-        )}
+        {/* Back button */}
+        {onClose && <BackButton onPress={onClose} variant="back" size="medium" />}
 
         {/* Level indicator */}
         <View className="flex-1 items-center mx-4">
-          <Text
-            className="text-sm text-text-medium mb-1"
-            style={{ fontFamily: 'Nunito_600SemiBold' }}
-          >
+          <Typography variant="body-sm" color="medium" className="mb-1">
             Level {level}
-          </Text>
+          </Typography>
 
           {/* Progress bar */}
           <View className="w-full max-w-xs">
             <View className="flex-row items-center justify-between mb-1">
-              <Text
-                className="text-xs text-text-medium"
-                style={{ fontFamily: 'Nunito_400Regular' }}
-              >
+              <Typography variant="caption" color="medium">
                 {score} / {targetScore}
-              </Text>
+              </Typography>
             </View>
             <View className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
               <View
@@ -64,19 +51,13 @@ export const GameStats: React.FC<GameStatsProps> = ({
 
         {/* Score display */}
         <View className="items-center">
-          <Text
-            className="text-xs text-text-medium mb-1"
-            style={{ fontFamily: 'Nunito_400Regular' }}
-          >
+          <Typography variant="caption" color="medium" className="mb-1">
             Popped
-          </Text>
+          </Typography>
           <View className="bg-white rounded-full px-3 py-1 shadow-sm">
-            <Text
-              className="text-lg text-grass-500"
-              style={{ fontFamily: 'Quicksand_700Bold' }}
-            >
+            <Typography variant="body-lg" className="text-grass-500">
               {bubblesPopped}
-            </Text>
+            </Typography>
           </View>
         </View>
       </View>

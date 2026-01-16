@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, Dimensions } from 'react-native';
+import { View, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { Typography } from '@/components/ui';
 import { Bubble, PopParticles, GameStats } from '@/components/kid/bubble-pop';
 import type { BubbleData } from '@/components/kid/bubble-pop';
 import { CelebrationModal } from '@/components/kid/CelebrationModal';
@@ -38,7 +39,7 @@ export default function BubblePopGame() {
   const [isPaused, setIsPaused] = useState(false);
 
   const bubbleIdCounter = useRef(0);
-  const spawnIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const spawnIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   /**
    * Calculate spawn interval based on level (gets faster with difficulty)
@@ -195,14 +196,11 @@ export default function BubblePopGame() {
 
       {/* Instructions */}
       <View className="px-6 py-3 bg-white/80">
-        <Text
-          className="text-center text-lg text-text-dark"
-          style={{ fontFamily: 'Quicksand_600SemiBold' }}
-        >
+        <Typography variant="body-lg" color="dark" center>
           {level === 1 && '🔤 Pop the letter bubbles!'}
           {level === 2 && '🎵 Pop the syllable bubbles!'}
           {level === 3 && '📝 Pop the word bubbles!'}
-        </Text>
+        </Typography>
       </View>
 
       {/* Game area */}
@@ -235,18 +233,12 @@ export default function BubblePopGame() {
         {isPaused && (
           <View className="absolute inset-0 bg-black/20 items-center justify-center">
             <View className="bg-white rounded-3xl p-8 shadow-lg">
-              <Text
-                className="text-3xl text-center text-primary-500 mb-2"
-                style={{ fontFamily: 'Quicksand_700Bold' }}
-              >
+              <Typography variant="h3" color="primary" center className="mb-2">
                 🎉 Level Complete!
-              </Text>
-              <Text
-                className="text-lg text-center text-text-medium"
-                style={{ fontFamily: 'Nunito_600SemiBold' }}
-              >
+              </Typography>
+              <Typography variant="body-lg" color="medium" center>
                 Get ready for Level {level + 1}...
-              </Text>
+              </Typography>
             </View>
           </View>
         )}

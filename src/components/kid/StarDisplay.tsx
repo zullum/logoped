@@ -1,14 +1,15 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { Icon } from '@/components/ui/Icon';
+import { Typography } from '@/components/ui';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withDelay,
 } from 'react-native-reanimated';
-
 import { formatCompactNumber } from '@/lib/utils/format';
+import { COLORS, ICON_SIZES } from '@/constants/theme';
 
 interface StarDisplayProps {
   count: number;
@@ -36,13 +37,10 @@ export const StarDisplay: React.FC<StarDisplayProps> = ({ count }) => {
       style={animatedStyle}
       className="flex-row items-center bg-sunshine-500 px-4 py-2 rounded-full"
     >
-      <Icon name="star" size={24} color="white" />
-      <Text
-        className="text-xl text-white ml-2"
-        style={{ fontFamily: 'Quicksand_700Bold' }}
-      >
+      <Icon name="star" size={ICON_SIZES.medium} color={COLORS.white} />
+      <Typography variant="button" color="white" className="ml-2">
         {formatCompactNumber(count)}
-      </Text>
+      </Typography>
     </Animated.View>
   );
 };

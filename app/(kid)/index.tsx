@@ -1,88 +1,124 @@
 import React from 'react';
-import { View, Text, FlatList, Pressable } from 'react-native';
+import { View, FlatList, Pressable, ImageBackground, Image, ImageSourcePropType } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from '@/hooks/useTranslation';
-import { Card, Icon } from '@/components/ui';
-import { CharacterAvatar, StarDisplay } from '@/components/kid';
+import { Card, Icon, Typography } from '@/components/ui';
+import { KidHeader } from '@/components/kid';
 import { useRewards } from '@/hooks/useRewards';
+import { ASSETS, CATEGORY_LIST } from './activities/picture-cards/assets';
 
-interface Activity {
+interface ActivityCard {
   id: string;
   titleKey: string;
-  icon: 'images-outline' | 'musical-notes-outline' | 'radio-button-on-outline' | 'book-outline' | 'grid-outline';
-  color: string;
+  type: 'category' | 'game';
+  categoryIcon?: ImageSourcePropType;
+  gameIcon?: 'images-outline' | 'musical-notes-outline' | 'radio-button-on-outline' | 'book-outline' | 'grid-outline';
+  bgColor: string;
   route: string;
+  params?: Record<string, string>;
 }
 
-const activities: Activity[] = [
-  {
-    id: 'picture-cards',
-    titleKey: 'kid.activities.pictureCards',
-    icon: 'images-outline',
-    color: 'bg-primary-500',
-    route: '/(kid)/activities/picture-cards',
-  },
+// Colorful background colors matching the category selector
+const BG_COLORS = ['#A5D6A7', '#CE93D8', '#FFCC80', '#90CAF9', '#F48FB1', '#E6EE9C', '#B39DDB', '#FFAB91'];
+
+// Generate category cards from ASSETS
+const categoryCards: ActivityCard[] = CATEGORY_LIST.map((categoryId: string, index: number) => ({
+  id: `category-${categoryId}`,
+  titleKey: `kid.categories.${categoryId}`,
+  type: 'category' as const,
+  categoryIcon: ASSETS[categoryId].icon,
+  bgColor: BG_COLORS[index % BG_COLORS.length],
+  route: '/(kid)/activities/picture-cards',
+  params: { category: categoryId },
+}));
+
+// Game activity cards with colorful backgrounds
+const gameCards: ActivityCard[] = [
   {
     id: 'sound-matching',
     titleKey: 'kid.activities.soundMatching',
-    icon: 'musical-notes-outline',
-    color: 'bg-sunshine-500',
+    type: 'game' as const,
+    gameIcon: 'musical-notes-outline',
+    bgColor: '#FFCC80', // Warm orange
     route: '/(kid)/activities/sound-matching',
   },
   {
     id: 'bubble-pop',
     titleKey: 'kid.activities.bubblePop',
-    icon: 'radio-button-on-outline',
-    color: 'bg-grass-500',
+    type: 'game' as const,
+    gameIcon: 'radio-button-on-outline',
+    bgColor: '#A5D6A7', // Light green
     route: '/(kid)/activities/bubble-pop',
   },
   {
     id: 'story-time',
     titleKey: 'kid.activities.storyTime',
-    icon: 'book-outline',
-    color: 'bg-coral-500',
+    type: 'game' as const,
+    gameIcon: 'book-outline',
+    bgColor: '#F48FB1', // Pink
     route: '/(kid)/activities/story-time',
   },
   {
     id: 'memory-game',
     titleKey: 'kid.activities.memoryGame',
-    icon: 'grid-outline',
-    color: 'bg-lavender-500',
+    type: 'game' as const,
+    gameIcon: 'grid-outline',
+    bgColor: '#B39DDB', // Purple
     route: '/(kid)/activities/memory-game',
   },
 ];
+
+// Combined activities: categories first, then games
+const activities: ActivityCard[] = [...categoryCards, ...gameCards];
 
 export default function KidHomeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { totalStars } = useRewards();
 
-  const renderActivityCard = ({ item }: { item: Activity }) => {
+  const renderActivityCard = ({ item }: { item: ActivityCard }) => {
     return (
       <View className="flex-1 p-2">
         <Card
-          onPress={() => router.push(item.route as any)}
-          className="aspect-square items-center justify-center"
+          onPress={() => {
+            if (item.params) {
+              router.push({
+                pathname: item.route as any,
+                params: item.params,
+              });
+            } else {
+              router.push(item.route as any);
+            }
+          }}
+          className="aspect-square items-center justify-center shadow-lg"
+          style={{ backgroundColor: item.bgColor }}
         >
-          <View
-            className={`
-              ${item.color}
-              w-20 h-20
-              rounded-full
-              items-center
-              justify-center
-              mb-md
-            `}
-          >
-            <Icon name={item.icon} size={40} color="white" />
-          </View>
-          <Text
-            className="text-lg text-text-dark text-center"
-            style={{ fontFamily: 'Quicksand_600SemiBold' }}
+          {item.type === 'category' ? (
+            // Category card with icon image
+            <View className="items-center justify-center mb-2">
+              <Image
+                source={item.categoryIcon}
+                style={{ width: 80, height: 80 }}
+                resizeMode="contain"
+              />
+            </View>
+          ) : (
+            // Game card with white circular background + ionicon
+            <View
+              className="w-20 h-20 rounded-full items-center justify-center mb-2 bg-white/90"
+            >
+              <Icon name={item.gameIcon!} size={40} color="#5D4037" />
+            </View>
+          )}
+          <Typography
+            variant="body-lg"
+            center
+            numberOfLines={2}
+            style={{ color: '#5D4037', fontWeight: 'bold' }}
           >
             {t(item.titleKey)}
-          </Text>
+          </Typography>
         </Card>
       </View>
     );
@@ -94,47 +130,42 @@ export default function KidHomeScreen() {
     const { totalStars } = useRewards();
 
     return (
-      <View className="px-4 pt-4 mb-lg">
-        {/* Header with Avatar and Stars */}
-        <View className="flex-col">
-          <Text
-            className="text-3xl text-text-dark mb-2"
-            style={{ fontFamily: 'Quicksand_700Bold' }}
-          >
-            {t('kid.home.title')}
-          </Text>
-          <View className="flex-row items-center justify-end gap-2">
-            <Pressable onPress={() => router.push('/(kid)/rewards')}>
-              <Card className="p-2">
-                <Icon name="ribbon-outline" size={28} color="#4A90E2" />
-              </Card>
-            </Pressable>
-            <StarDisplay count={totalStars || 0} />
-            <CharacterAvatar size={50} />
-          </View>
-        </View>
+      <View className="mb-lg">
+        {/* Colorful Kid Header */}
+        <KidHeader
+          title={t('kid.home.title')}
+          totalStars={totalStars || 0}
+          onRewardsPress={() => router.push('/(kid)/rewards')}
+        />
 
         {/* Sub-header */}
-        <Text
-          className="text-xl text-text-dark mt-lg mb-sm"
-          style={{ fontFamily: 'Quicksand_600SemiBold' }}
+        <Typography
+          variant="h4"
+          color="dark"
+          className="mt-lg mb-sm px-4"
         >
           {t('kid.home.todayChallenge')}
-        </Text>
+        </Typography>
       </View>
     );
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background-light" edges={['top', 'left', 'right']}>
-      <FlatList
-        data={activities}
-        renderItem={renderActivityCard}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        ListHeaderComponent={<ListHeader />}
-        contentContainerClassName="pb-lg"
-      />
-    </SafeAreaView>
+    <ImageBackground
+      source={require('@assets/images/farm_background.jpg')}
+      style={{ flex: 1 }}
+      resizeMode="cover"
+    >
+      <SafeAreaView className="flex-1" edges={['top', 'left', 'right']}>
+        <FlatList
+          data={activities}
+          renderItem={renderActivityCard}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          ListHeaderComponent={<ListHeader />}
+          contentContainerClassName="pb-lg"
+        />
+      </SafeAreaView>
+    </ImageBackground>
   );
 }

@@ -1,12 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react';
 import {
   View,
-  Text,
   Pressable,
   ScrollView,
   LayoutChangeEvent,
   Dimensions,
 } from 'react-native';
+import { Typography } from '@/components/ui';
 import type { WordCategory } from '@/types';
 import { useTranslation } from '@/hooks/useTranslation';
 
@@ -57,6 +57,12 @@ const categories: Array<{
     emoji: '👋',
     color: 'bg-primary-500',
   },
+  {
+    id: 'vehicles',
+    nameKey: 'kid.categories.vehicles',
+    emoji: '🚗',
+    color: 'bg-coral-500',
+  },
 ];
 
 const { width: screenWidth } = Dimensions.get('window');
@@ -97,12 +103,9 @@ export function CategorySelector({
 
   return (
     <View className="mb-md">
-      <Text
-        className="text-base text-text-medium mb-sm"
-        style={{ fontFamily: 'Nunito_600SemiBold' }}
-      >
+      <Typography variant="body" color="medium" className="mb-sm">
         {t('kid.pictureCards.chooseCategory')}
-      </Text>
+      </Typography>
 
       <ScrollView
         ref={scrollViewRef}
@@ -154,16 +157,16 @@ export function CategorySelector({
                     elevation: isSelected ? 3 : 0,
                   }}
                 >
-                  <Text style={{ fontSize: 24 }}>{category.emoji}</Text>
-                  <Text
+                  <Typography style={{ fontSize: 24 }}>{category.emoji}</Typography>
+                  <Typography
+                    variant="body-sm"
                     style={{
                       fontFamily: 'Quicksand_600SemiBold',
-                      fontSize: 14,
                       color: isSelected ? '#FFFFFF' : '#374151',
                     }}
                   >
                     {t(category.nameKey)}
-                  </Text>
+                  </Typography>
                 </View>
               </Pressable>
             </View>

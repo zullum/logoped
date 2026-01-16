@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, View, Text } from 'react-native';
+import { Pressable, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
   cancelAnimation,
 } from 'react-native-reanimated';
+import { Typography } from '@/components/ui';
 
 interface SoundPromptProps {
   isPlaying: boolean;
@@ -60,12 +61,9 @@ export const SoundPrompt: React.FC<SoundPromptProps> = ({
   return (
     <View className="items-center py-8">
       {/* Instruction text */}
-      <Text
-        className="text-xl text-text-dark mb-6 text-center px-4"
-        style={{ fontFamily: 'Quicksand_600SemiBold' }}
-      >
+      <Typography variant="button" color="dark" center className="mb-6 px-4">
         Tap the speaker to hear the word!
-      </Text>
+      </Typography>
 
       {/* Speaker button */}
       <AnimatedPressable
@@ -78,16 +76,13 @@ export const SoundPrompt: React.FC<SoundPromptProps> = ({
         accessibilityState={{ disabled: disabled || isPlaying }}
       >
         {/* Speaker icon */}
-        <Text className="text-5xl">🔊</Text>
+        <Typography className="text-5xl">🔊</Typography>
       </AnimatedPressable>
 
       {/* Helper text */}
-      <Text
-        className="text-sm text-text-medium mt-4"
-        style={{ fontFamily: 'Nunito_400Regular' }}
-      >
+      <Typography variant="body-sm" color="medium" className="mt-4">
         {isPlaying ? 'Playing...' : 'Tap to play again'}
-      </Text>
+      </Typography>
     </View>
   );
 };

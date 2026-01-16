@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -9,7 +9,9 @@ import Animated, {
   Easing,
   runOnJS,
 } from 'react-native-reanimated';
+import { Typography } from '@/components/ui';
 import { FloatingReaction } from './FloatingReaction';
+import { COLORS } from '@/constants/theme';
 
 const { width } = Dimensions.get('window');
 
@@ -17,6 +19,7 @@ interface SubtleRewardDisplayProps {
   starsEarned: number;
   message?: string;
   onComplete?: () => void;
+  imageUrl?: string | number; // Can be a URL string or local require() number
 }
 
 /**
@@ -27,6 +30,7 @@ export const SubtleRewardDisplay: React.FC<SubtleRewardDisplayProps> = ({
   starsEarned,
   message,
   onComplete,
+  imageUrl,
 }) => {
 
   const [showReactions, setShowReactions] = useState(false);
@@ -46,8 +50,8 @@ export const SubtleRewardDisplay: React.FC<SubtleRewardDisplayProps> = ({
     // Show floating reactions immediately
     setShowReactions(true);
 
-    // Start entrance animation
-    translateY.value = withSpring(20, { damping: 15 });
+    // Start entrance animation (70px down to avoid front cameras and notches)
+    translateY.value = withSpring(70, { damping: 15 });
     opacity.value = withTiming(1, { duration: 300 });
     scale.value = withSpring(1, { damping: 12 });
 
@@ -78,17 +82,27 @@ export const SubtleRewardDisplay: React.FC<SubtleRewardDisplayProps> = ({
       {/* Small top banner */}
       <Animated.View style={[styles.banner, animatedStyle]} pointerEvents="none">
         <View style={styles.bannerContent}>
-          <Text style={styles.starText}>⭐ +{starsEarned}</Text>
-          {message && <Text style={styles.messageText}>{message}</Text>}
+          <Typography style={styles.starText}>⭐ +{starsEarned}</Typography>
+          {message && <Typography style={styles.messageText}>{message}</Typography>}
         </View>
       </Animated.View>
 
       {/* Floating reactions */}
       {showReactions && (
         <View style={styles.reactionsContainer} pointerEvents="none">
-          <FloatingReaction emoji="⭐" startX={width * 0.3} />
-          <FloatingReaction emoji="💫" startX={width * 0.5} />
-          <FloatingReaction emoji="✨" startX={width * 0.7} />
+          {imageUrl ? (
+            <>
+              <FloatingReaction imageUrl={imageUrl} startX={width * 0.3} />
+              <FloatingReaction imageUrl={imageUrl} startX={width * 0.5} />
+              <FloatingReaction imageUrl={imageUrl} startX={width * 0.7} />
+            </>
+          ) : (
+            <>
+              <FloatingReaction emoji="⭐" startX={width * 0.3} />
+              <FloatingReaction emoji="💫" startX={width * 0.5} />
+              <FloatingReaction emoji="✨" startX={width * 0.7} />
+            </>
+          )}
         </View>
       )}
     </>
@@ -118,7 +132,7 @@ const styles = StyleSheet.create({
   starText: {
     fontSize: 24,
     fontFamily: 'Quicksand_700Bold',
-    color: '#FFFFFF',
+    color: COLORS.white,
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
@@ -126,7 +140,7 @@ const styles = StyleSheet.create({
   messageText: {
     fontSize: 14,
     fontFamily: 'Nunito_600SemiBold',
-    color: '#FFFFFF',
+    color: COLORS.white,
     marginTop: 4,
   },
   reactionsContainer: {

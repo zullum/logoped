@@ -10,6 +10,7 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 import { Icon } from '@/components/ui/Icon';
+import { COLORS } from '@/constants/theme';
 
 interface StarAnimationProps {
   count: number;
@@ -79,7 +80,7 @@ const AnimatedStar: React.FC<{
 export const StarAnimation: React.FC<StarAnimationProps> = ({
   count,
   size = 40,
-  color = '#FFD166',
+  color = COLORS.sunshine,
   delay = 0,
   onAnimationComplete,
 }) => {

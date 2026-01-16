@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { View, Text, ScrollView, SafeAreaView } from 'react-native';
+import { View, ScrollView, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Typography } from '@/components/ui';
 import { useWords } from '@/features/words';
 import { useWordProgress } from '@/features/words/hooks/useWordProgress';
 import { useRewards } from '@/hooks/useRewards';
@@ -28,7 +29,7 @@ const MAX_OPTIONS = 4;
 export default function SoundMatchingGame() {
   const router = useRouter();
   const { language } = useTranslation();
-  const { words, isLoading } = useWords();
+  const { data: words, isLoading } = useWords();
   const { recordAttempt } = useWordProgress();
   const { celebration, clearCelebration, awardStars } = useRewards();
 
@@ -42,7 +43,7 @@ export default function SoundMatchingGame() {
   const [isRoundComplete, setIsRoundComplete] = useState(false);
 
   // Audio hook
-  const audioUri = currentRoundData?.targetWord.audioUrl[language] || '';
+  const audioUri = currentRoundData?.targetWord.audioUrl[language as 'en' | 'es'] || '';
   const { play: playWordAudio, isPlaying } = useAudio(
     `word-${currentRoundData?.targetWord.id}`,
     audioUri,
@@ -54,6 +55,8 @@ export default function SoundMatchingGame() {
    */
   const generateOptions = useCallback(
     (targetWord: Word, count: number): Word[] => {
+      if (!words) return [];
+
       // Filter out the target word
       const availableWords = words.filter((w: Word) => w.id !== targetWord.id);
 
@@ -76,7 +79,7 @@ export default function SoundMatchingGame() {
    */
   const initializeRound = useCallback(
     (roundNumber: number) => {
-      if (words.length < difficulty) {
+      if (!words || words.length < difficulty) {
         console.warn('Not enough words for current difficulty');
         return;
       }
@@ -110,7 +113,7 @@ export default function SoundMatchingGame() {
    * Initialize game on mount
    */
   useEffect(() => {
-    if (words.length > 0 && currentRound === 1 && !currentRoundData) {
+    if (words && words.length > 0 && currentRound === 1 && !currentRoundData) {
       initializeRound(1);
     }
   }, [words, currentRound, currentRoundData, initializeRound]);
@@ -211,12 +214,9 @@ export default function SoundMatchingGame() {
   if (isLoading || !currentRoundData) {
     return (
       <SafeAreaView className="flex-1 bg-background-light items-center justify-center">
-        <Text
-          className="text-xl text-text-medium"
-          style={{ fontFamily: 'Quicksand_600SemiBold' }}
-        >
+        <Typography variant="button" color="medium">
           Loading game...
-        </Text>
+        </Typography>
       </SafeAreaView>
     );
   }
@@ -245,12 +245,9 @@ export default function SoundMatchingGame() {
           />
 
           {/* Instructions */}
-          <Text
-            className="text-center text-lg text-text-dark px-6 mb-6"
-            style={{ fontFamily: 'Nunito_600SemiBold' }}
-          >
+          <Typography variant="body-lg" color="dark" center className="px-6 mb-6">
             Which picture matches the sound?
-          </Text>
+          </Typography>
 
           {/* Options grid */}
           <View className="flex-row flex-wrap justify-center px-4">
@@ -273,14 +270,11 @@ export default function SoundMatchingGame() {
           {/* Feedback message */}
           {currentRoundData.isCorrect !== null && (
             <View className="items-center mt-8">
-              <Text
-                className="text-2xl text-center px-6"
-                style={{ fontFamily: 'Quicksand_700Bold' }}
-              >
+              <Typography variant="h4" center className="px-6">
                 {currentRoundData.isCorrect
                   ? '🎉 Great job! That\'s correct!'
                   : '💪 Try again! Listen carefully.'}
-              </Text>
+              </Typography>
             </View>
           )}
         </ScrollView>
